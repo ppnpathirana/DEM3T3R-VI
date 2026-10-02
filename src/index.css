@@ -1,0 +1,88 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary: #00E676;
+  --secondary: #00E5FF;
+  --hazard: #FF334B;
+  --pathogen: #E040A0;
+}
+
+body {
+  background-color: #08090C;
+  background-image: 
+    radial-gradient(circle at 15% 10%, rgba(0, 229, 255, 0.035) 0%, transparent 40%),
+    radial-gradient(circle at 85% 20%, rgba(0, 230, 118, 0.03) 0%, transparent 45%),
+    radial-gradient(circle at 50% 85%, rgba(224, 64, 160, 0.025) 0%, transparent 50%);
+  color: #E4E1EB;
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden;
+  user-select: none;
+}
+
+@media (max-height: 900px) {
+  body {
+    overflow-y: auto;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: #090A0E;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.12);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #00E676;
+}
+
+/* Tactical Styling for Leaflet */
+.leaflet-container {
+  background: #0B0C10 !important;
+  font-family: 'JetBrains Mono', monospace !important;
+}
+.leaflet-bar {
+  border: 1px solid rgba(255,255,255,0.09) !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5) !important;
+  border-radius: 8px !important;
+  overflow: hidden;
+}
+.leaflet-bar a {
+  background-color: #14151D !important;
+  color: #00E5FF !important;
+  border-bottom: 1px solid rgba(255,255,255,0.08) !important;
+}
+.leaflet-bar a:hover {
+  background-color: #1F202B !important;
+  color: #00E676 !important;
+}
+.tactical-marker-active {
+  animation: pulse-ring 1.8s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+}
+@keyframes pulse-ring {
+  0% { transform: scale(0.9); opacity: 0.95; }
+  50% { transform: scale(1.45); opacity: 0.35; }
+  100% { transform: scale(0.9); opacity: 0.95; }
+}
+.frost-card {
+  background: rgba(20, 21, 29, 0.78);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+.pill-stat {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.glow-dot {
+  box-shadow: 0 0 10px currentColor;
+}

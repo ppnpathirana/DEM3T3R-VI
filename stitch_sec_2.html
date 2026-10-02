@@ -1,0 +1,217 @@
+
+<!-- Card 3A: Predictive Weather & Pathology Risk Suite (Nexora Style with Ring & Flow) -->
+<div class="frost-card rounded-2xl flex flex-col shrink-0 overflow-hidden">
+<div class="h-9 px-3.5 border-b border-white/[0.06] flex items-center justify-between bg-white/[0.02]">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-pathogen text-[15px]">coronavirus</span>
+<span class="font-semibold text-[11px] tracking-wide text-white">Agronomic Pathology</span>
+</div>
+<span class="text-[9px] font-mono text-hazard px-2 py-0.5 rounded-full bg-hazard/10 border border-hazard/25 font-bold">ALGO V4.2</span>
+</div>
+<div class="p-2.5 flex flex-col gap-2">
+<!-- Top Section: Segmented Radial / Donut Risk Ring (Matching Nexora "Sources / Determinations") -->
+<div class="rounded-xl bg-white/[0.02] border border-white/[0.05] p-2.5 flex items-center justify-between gap-3">
+<!-- Donut Graphic -->
+<div class="relative w-16 h-16 shrink-0 flex items-center justify-center">
+<svg class="w-16 h-16 transform -rotate-90" viewbox="0 0 36 36">
+<!-- Background ring -->
+<path class="text-white/10" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="4"></path>
+<!-- Safe green segment -->
+<path class="text-primary" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="22, 100" stroke-width="4"></path>
+<!-- High Risk red segment -->
+<path class="text-hazard" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="78, 100" stroke-dashoffset="-22" stroke-linecap="round" stroke-width="4.5"></path>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+<span class="text-sm font-bold text-white font-mono leading-none">78%</span>
+<span class="text-[7px] text-muted uppercase tracking-tighter">RISK</span>
+</div>
+</div>
+<!-- Breakdown -->
+<div class="flex-1 flex flex-col justify-center">
+<div class="flex items-center justify-between mb-1">
+<span class="text-[10px] font-semibold text-white">Sporulation Index</span>
+<span class="text-[9px] text-hazard font-mono font-bold bg-hazard/15 px-1.5 py-0.2 rounded">HIGH</span>
+</div>
+<p class="text-[8.5px] text-muted leading-tight">
+              Sustained 68% RH + 24.5°C dewpoint trigger window in Sector 4.
+            </p>
+</div>
+</div>
+<!-- 7-Day Microclimate Forecast Spark Bar Graph -->
+<div class="rounded-xl bg-white/[0.02] border border-white/[0.05] p-2 flex flex-col gap-1">
+<div class="flex items-center justify-between text-[8px] text-muted">
+<span class="uppercase tracking-wider">7-Day Rain Probability %</span>
+<span class="text-white">Peak D4 (85%)</span>
+</div>
+<div class="grid grid-cols-7 gap-1 text-center pt-1 items-end h-10">
+<div class="flex flex-col items-center gap-1">
+<div class="w-2.5 bg-primary/70 rounded-full h-3"></div>
+<span class="text-[7.5px] text-muted font-mono">10%</span>
+</div>
+<div class="flex flex-col items-center gap-1">
+<div class="w-2.5 bg-primary/70 rounded-full h-4"></div>
+<span class="text-[7.5px] text-muted font-mono">15%</span>
+</div>
+<div class="flex flex-col items-center gap-1">
+<div class="w-2.5 bg-primary/70 rounded-full h-5"></div>
+<span class="text-[7.5px] text-muted font-mono">30%</span>
+</div>
+<div class="flex flex-col items-center gap-1">
+<div class="w-2.5 bg-hazard rounded-full h-8 shadow-[0_0_8px_rgba(255,51,75,0.5)]"></div>
+<span class="text-[7.5px] text-hazard font-bold font-mono">85%</span>
+</div>
+<div class="flex flex-col items-center gap-1">
+<div class="w-2.5 bg-secondary rounded-full h-6"></div>
+<span class="text-[7.5px] text-secondary font-mono">60%</span>
+</div>
+<div class="flex flex-col items-center gap-1">
+<div class="w-2.5 bg-primary/70 rounded-full h-2"></div>
+<span class="text-[7.5px] text-muted font-mono">05%</span>
+</div>
+<div class="flex flex-col items-center gap-1">
+<div class="w-2.5 bg-primary/70 rounded-full h-2"></div>
+<span class="text-[7.5px] text-muted font-mono">00%</span>
+</div>
+</div>
+</div>
+<!-- AI Decision Pipeline Flow (Matching Reference Investigations Flow Tree) -->
+<div class="rounded-xl bg-white/[0.02] border border-white/[0.05] p-2 flex flex-col gap-1.5">
+<div class="flex items-center justify-between text-[8px] text-muted">
+<span class="font-semibold text-white uppercase tracking-wider">AI Execution Pipeline Flow</span>
+<span class="text-primary font-mono text-[8px]">● Nominal</span>
+</div>
+<!-- Connected node pipeline -->
+<div class="flex items-center justify-between gap-1 text-[8px] font-mono">
+<div class="px-2 py-1 rounded-full bg-white/10 text-white font-medium">Ingest</div>
+<span class="text-muted text-[10px]">→</span>
+<div class="px-2 py-1 rounded-full bg-pathogen/20 text-pathogen border border-pathogen/30 font-medium">Blight (0.94)</div>
+<span class="text-muted text-[10px]">→</span>
+<div class="px-2 py-1 rounded-full bg-primary/20 text-primary border border-primary/30 font-medium">Relay 1,4</div>
+</div>
+<p class="text-[8px] text-muted font-mono leading-tight mt-0.5">
+            Prescription: Mancozeb / Copper Hydroxide dispense 15ml/m² on WP-04.
+          </p>
+</div>
+</div>
+</div>
+<!-- Card 3B: Harvest Prognosis & Soil Chemistry (NPK) -->
+<div class="frost-card rounded-2xl flex flex-col shrink-0 overflow-hidden">
+<div class="h-8 px-3.5 border-b border-white/[0.06] flex items-center justify-between bg-white/[0.02]">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[15px]">science</span>
+<span class="font-semibold text-[11px] tracking-wide text-white">Soil Chemistry &amp; Harvest</span>
+</div>
+<span class="text-[9px] font-mono text-primary px-2 py-0.5 rounded-full bg-primary/10 border border-primary/25 font-bold">HEALTH: 91%</span>
+</div>
+<div class="p-2 flex flex-col gap-1.5">
+<!-- NPK Telemetry Cards -->
+<div class="grid grid-cols-3 gap-1.5">
+<div class="rounded-xl bg-white/[0.02] border border-white/[0.05] p-2 flex flex-col">
+<span class="text-[8px] text-muted block">NITROGEN (N)</span>
+<span class="text-base font-bold text-white font-mono mt-0.5">7 <span class="text-[8px] text-muted font-normal">ppm</span></span>
+<span class="text-[7.5px] text-primary mt-0.5">Optimal</span>
+</div>
+<div class="rounded-xl bg-white/[0.02] border border-white/[0.05] p-2 flex flex-col">
+<span class="text-[8px] text-muted block">PHOSPHORUS (P)</span>
+<span class="text-base font-bold text-secondary font-mono mt-0.5">14 <span class="text-[8px] text-muted font-normal">ppm</span></span>
+<span class="text-[7.5px] text-secondary mt-0.5">Medium</span>
+</div>
+<div class="rounded-xl bg-white/[0.02] border border-white/[0.05] p-2 flex flex-col">
+<span class="text-[8px] text-muted block">POTASSIUM (K)</span>
+<span class="text-base font-bold text-pathogen font-mono mt-0.5">109 <span class="text-[8px] text-muted font-normal">ppm</span></span>
+<span class="text-[7.5px] text-pathogen mt-0.5">High</span>
+</div>
+</div>
+<div class="rounded-xl bg-white/[0.02] border border-white/[0.05] px-2.5 py-1.5 flex items-center justify-between font-mono text-[8.5px]">
+<div>
+<span class="text-muted block text-[7.5px]">EST. HARVEST BIOMASS</span>
+<span class="text-white font-bold text-[10px]">60.9 kg / row</span>
+</div>
+<div class="text-right">
+<span class="text-muted block text-[7.5px]">C:N RATIO</span>
+<span class="text-primary font-bold text-[10px]">1.4:1 OPTIMAL</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Card 3C: 4-Channel Precision Solid State Relay Bus -->
+<div class="frost-card rounded-2xl flex flex-col shrink-0 overflow-hidden">
+<div class="h-8 px-3.5 border-b border-white/[0.06] flex items-center justify-between bg-white/[0.02]">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[15px]">toggle_on</span>
+<span class="font-semibold text-[11px] tracking-wide text-white">Precision Relay Bus</span>
+</div>
+<span class="font-mono text-[8px] text-muted">HOTKEYS: [1] [2] [3] [4]</span>
+</div>
+<div class="p-1.5 grid grid-cols-1 gap-1">
+<!-- Relay 1: Active -->
+<div class="flex items-center justify-between px-2.5 py-1.5 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary glow-dot" id="led-relay-1"></span>
+<div>
+<span class="text-[10px] font-semibold text-white block leading-tight">Pesticide / Water Pump</span>
+<span class="font-mono text-[7.5px] text-muted">GPIO 10 · 12V 4A</span>
+</div>
+</div>
+<button class="relay-btn px-2.5 py-0.5 font-mono text-[8px] font-bold uppercase rounded-full transition-all bg-white text-black shadow-sm" data-relay="1">
+            [1] ACTIVE
+          </button>
+</div>
+<!-- Relay 2: Standby -->
+<div class="flex items-center justify-between px-2.5 py-1.5 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-white/20" id="led-relay-2"></span>
+<div>
+<span class="text-[10px] font-semibold text-white block leading-tight">Soil Probe Zone A</span>
+<span class="font-mono text-[7.5px] text-muted">GPIO 11 · Actuator</span>
+</div>
+</div>
+<button class="relay-btn px-2.5 py-0.5 font-mono text-[8px] font-bold uppercase rounded-full transition-all bg-white/[0.05] text-muted hover:text-white border border-white/10" data-relay="2">
+            [2] STANDBY
+          </button>
+</div>
+<!-- Relay 3: Standby -->
+<div class="flex items-center justify-between px-2.5 py-1.5 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-white/20" id="led-relay-3"></span>
+<div>
+<span class="text-[10px] font-semibold text-white block leading-tight">Soil Probe Zone B</span>
+<span class="font-mono text-[7.5px] text-muted">GPIO 12 · Actuator</span>
+</div>
+</div>
+<button class="relay-btn px-2.5 py-0.5 font-mono text-[8px] font-bold uppercase rounded-full transition-all bg-white/[0.05] text-muted hover:text-white border border-white/10" data-relay="3">
+            [3] STANDBY
+          </button>
+</div>
+<!-- Relay 4: Active -->
+<div class="flex items-center justify-between px-2.5 py-1.5 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary glow-dot" id="led-relay-4"></span>
+<div>
+<span class="text-[10px] font-semibold text-white block leading-tight">Sprayer Boom Actuator</span>
+<span class="font-mono text-[7.5px] text-muted">GPIO 13 · 24V PWM</span>
+</div>
+</div>
+<button class="relay-btn px-2.5 py-0.5 font-mono text-[8px] font-bold uppercase rounded-full transition-all bg-white text-black shadow-sm" data-relay="4">
+            [4] ACTIVE
+          </button>
+</div>
+</div>
+</div>
+<!-- Card 3D: Real-Time Event Audit Log Stream -->
+<div class="frost-card rounded-2xl flex-1 flex flex-col min-h-0 overflow-hidden">
+<div class="h-7 px-3.5 border-b border-white/[0.06] flex items-center justify-between bg-white/[0.02]">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary text-[13px]">view_timeline</span>
+<span class="font-semibold text-[10px] tracking-wide text-white">Event Audit Stream</span>
+</div>
+<span class="font-mono text-[8px] text-muted">1024 BUF</span>
+</div>
+<div class="p-2 flex-1 overflow-y-auto font-mono text-[8px] space-y-1 text-muted leading-tight max-h-[80px]" id="audit-log-stream">
+<div><span class="text-primary">[SYS 14:02:11]</span> RTK Fixed GPS lock acquired (14 SVs).</div>
+<div><span class="text-secondary">[NAV 14:02:18]</span> Target WP-04 locked. Track deviation: 1.8cm.</div>
+<div><span class="text-pathogen">[YOLO 14:02:29]</span> Pathogen: TOMATO EARLY BLIGHT (0.94).</div>
+<div><span class="text-primary">[RELAY 14:02:30]</span> Relay 1 (Pesticide) AUTO-ENGAGED.</div>
+<div><span class="text-white">[CLI 14:02:35]</span> ESP32 native bridge heartbeat nominal.</div>
+</div>
+</div>

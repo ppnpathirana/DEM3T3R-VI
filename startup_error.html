@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8"/>
+        <title>DEM3T3R V1 — Startup Diagnostic</title>
+        <style>
+            body { background: #08090C; color: #E4E1EB; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }
+            .card { background: #14151D; border: 1px solid rgba(255,51,75,0.4); border-radius: 16px; padding: 32px; max-width: 650px; width: 100%; box-shadow: 0 10px 40px rgba(0,0,0,0.8); text-align: center; }
+            h2 { color: #FF334B; margin-top: 0; font-size: 20px; }
+            p { color: #8C92A4; font-size: 13px; line-height: 1.6; }
+            pre { background: #090A0E; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 12px; font-family: monospace; font-size: 11px; text-align: left; overflow-x: auto; color: #00E5FF; max-height: 200px; }
+            button { background: #00E676; color: #000; border: none; padding: 10px 24px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 16px; }
+            button:hover { background: #00c864; }
+        </style>
+    </head>
+    <body>
+        <div class="card">
+            <h2>⚠️ DEM3T3R V1 Backend Initialization Timeout</h2>
+            <p>The backend exited or did not become ready within 120 seconds. Below is the recent output from <code>backend_launch.log</code>:</p>
+            <pre>
+Loading weights:   0%|          | 1/603 [00:02&lt;21:14,  2.12s/it]
+Loading weights:  14%|#3        | 84/603 [00:02&lt;00:10, 50.33it/s]
+Loading weights:  18%|#8        | 111/603 [00:02&lt;00:10, 47.93it/s][OLLAMA HEARTBEAT] Check failed: HTTPConnectionPool(host=&#x27;localhost&#x27;, port=11434): Max retries exceeded with url: /api/tags (Caused by ConnectTimeoutError(&lt;HTTPConnection(host=&#x27;localhost&#x27;, port=11434) at 0x2598caf2690&gt;, &#x27;Connection to localhost timed out. (connect timeout=2)&#x27;))
+
+Loading weights:  21%|##1       | 128/603 [00:05&lt;00:21, 22.29it/s]
+Loading weights: 100%|##########| 603/603 [00:05&lt;00:00, 116.74it/s]
+Some parameters are on the meta device because they were offloaded to the cpu.
+[VLA] PaliGemma loaded successfully in FP16 mode.
+[OLLAMA HEARTBEAT] Check failed: HTTPConnectionPool(host=&#x27;localhost&#x27;, port=11434): Max retries exceeded with url: /api/tags (Caused by ConnectTimeoutError(&lt;HTTPConnection(host=&#x27;localhost&#x27;, port=11434) at 0x2598c56d110&gt;, &#x27;Connection to localhost timed out. (connect timeout=2)&#x27;))
+[OLLAMA HEARTBEAT] Check failed: HTTPConnectionPool(host=&#x27;localhost&#x27;, port=11434): Max retries exceeded with url: /api/tags (Caused by ConnectTimeoutError(&lt;HTTPConnection(host=&#x27;localhost&#x27;, port=11434) at 0x2598c507550&gt;, &#x27;Connection to localhost timed out. (connect timeout=2)&#x27;))
+127.0.0.1 - - [28/Sep/2026 00:25:53] &quot;GET /api/health HTTP/1.1&quot; 200 -
+127.0.0.1 - - [28/Sep/2026 00:25:53] &quot;GET / HTTP/1.1&quot; 200 -
+[OLLAMA HEARTBEAT] Check failed: HTTPConnectionPool(host=&#x27;localhost&#x27;, port=11434): Max retries exceeded with url: /api/tags (Caused by ConnectTimeoutError(&lt;HTTPConnection(host=&#x27;localhost&#x27;, port=11434) at 0x2598c5a7c50&gt;, &#x27;Connection to localhost timed out. (connect timeout=2)&#x27;))
+[OLLAMA HEARTBEAT] Check failed: HTTPConnectionPool(host=&#x27;localhost&#x27;, port=11434): Max retries exceeded with url: /api/tags (Caused by ConnectTimeoutError(&lt;HTTPConnection(host=&#x27;localhost&#x27;, port=11434) at 0x2598c7bf9d0&gt;, &#x27;Connection to localhost timed out. (connect timeout=2)&#x27;))
+[OLLAMA HEARTBEAT] Check failed: HTTPConnectionPool(host=&#x27;localhost&#x27;, port=11434): Max retries exceeded with url: /api/tags (Caused by ConnectTimeoutError(&lt;HTTPConnection(host=&#x27;localhost&#x27;, port=11434) at 0x2598c5a6490&gt;, &#x27;Connection to localhost timed out. (connect timeout=2)&#x27;))
+[OLLAMA HEARTBEAT] Check failed: HTTPConnectionPool(host=&#x27;localhost&#x27;, port=11434): Max retries exceeded with url: /api/tags (Caused by ConnectTimeoutError(&lt;HTTPConnection(host=&#x27;localhost&#x27;, port=11434) at 0x2598c5ef8d0&gt;, &#x27;Connection to localhost timed out. (connect timeout=2)&#x27;))
+127.0.0.1 - - [28/Sep/2026 00:26:56] &quot;GET /api/health HTTP/1.1&quot; 200 -
+[OLLAMA HEARTBEAT] Check failed: HTTPConnectionPool(host=&#x27;localhost&#x27;, port=11434): Max retries exceeded with url: /api/tags (Caused by ConnectTimeoutError(&lt;HTTPConnection(host=&#x27;localhost&#x27;, port=11434) at 0x2598c7bf9d0&gt;, &#x27;Connection to localhost timed out. (connect timeout=2)&#x27;))
+[OLLAMA HEARTBEAT] Check failed: HTTPConnectionPool(host=&#x27;localhost&#x27;, port=11434): Max retries exceeded with url: /api/tags (Caused by ConnectTimeoutError(&lt;HTTPConnection(host=&#x27;localhost&#x27;, port=11434) at 0x2598c794710&gt;, &#x27;Connection to localhost timed out. (connect timeout=2)&#x27;))
+[OLLAMA HEARTBEAT] Check failed: HTTPConnectionPool(host=&#x27;localhost&#x27;, port=11434): Max retries exceeded with url: /api/tags (Caused by ConnectTimeoutError(&lt;HTTPConnection(host=&#x27;localhost&#x27;, port=11434) at 0x2598c5a2410&gt;, &#x27;Connection to localhost timed out. (connect timeout=2)&#x27;))
+[OLLAMA HEARTBEAT] Check failed: HTTPConnectionPool(host=&#x27;localhost&#x27;, port=11434): Max retries exceeded with url: /api/tags (Caused by ConnectTimeoutError(&lt;HTTPConnection(host=&#x27;localhost&#x27;, port=11434) at 0x2598c5a0d50&gt;, &#x27;Connection to localhost timed out. (connect timeout=2)&#x27;))
+[OLLAMA HEARTBEAT] Check failed: HTTPConnectionPool(host=&#x27;localhost&#x27;, port=11434): Max retries exceeded with url: /api/tags (Caused by ConnectTimeoutError(&lt;HTTPConnection(host=&#x27;localhost&#x27;, port=11434) at 0x2598c5a38d0&gt;, &#x27;Connection to localhost timed out. (connect timeout=2)&#x27;))
+[OLLAMA HEARTBEAT] Check failed: HTTPConnectionPool(host=&#x27;localhost&#x27;, port=11434): Max retries exceeded with url: /api/tags (Caused by ConnectTimeoutError(&lt;HTTPConnection(host=&#x27;localhost&#x27;, port=11434) at 0x2598c5a3c10&gt;, &#x27;Connection to localhost timed out. (connect timeout=2)&#x27;))
+[OLLAMA HEARTBEAT] Check failed: HTTPConnectionPool(host=&#x27;localhost&#x27;, port=11434): Max retries exceeded with url: /api/tags (Caused by ConnectTimeoutError(&lt;HTTPConnection(host=&#x27;localhost&#x27;, port=11434) at 0x2598c603c50&gt;, &#x27;Connection to localhost timed out. (connect timeout=2)&#x27;))
+</pre>
+            <button onclick="location.href='http://127.0.0.1:5001/'">Retry Connecting</button>
+        </div>
+    </body>
+    </html>
+    

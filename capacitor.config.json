@@ -1,0 +1,12 @@
+{
+  "appId": "com.cropguard.ai",
+  "appName": "DEM3T3R V1",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https",
+    "cleartext": true
+  },
+  "android": {
+    "allowMixedContent": true
+  }
+}

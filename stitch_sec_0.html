@@ -1,0 +1,148 @@
+
+<!-- Card 1A: Live Tactical GPS Leaflet Map -->
+<div class="frost-card rounded-2xl flex flex-col shrink-0 h-[51%] overflow-hidden">
+<!-- Header -->
+<div class="h-9 px-3.5 border-b border-white/[0.06] flex items-center justify-between shrink-0 bg-white/[0.02]">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[15px]">radar</span>
+<span class="font-semibold text-[11px] tracking-wide text-white">Tactical GPS Location</span>
+<span class="px-2 py-0.5 rounded-full bg-primary/10 border border-primary/30 text-primary text-[9px] font-mono font-medium">RTK Fixed</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-muted text-[10px] font-mono">WP-04 ACTIVE</span>
+<span class="font-mono text-[10px] font-bold text-secondary px-2 py-0.5 rounded-full bg-secondary/10 border border-secondary/20" id="stage-eta-val">00:00 ETA</span>
+</div>
+</div>
+<!-- Coordinates Ribbon Pill Bar -->
+<div class="px-3 py-1.5 border-b border-white/[0.04] bg-black/30 flex items-center justify-between gap-1 flex-wrap font-mono text-[9px] shrink-0 text-muted">
+<div>LAT: <span class="text-white font-semibold" id="ribbon-lat">6.92715° N</span></div>
+<div>LON: <span class="text-white font-semibold" id="ribbon-lon">79.86124° E</span></div>
+<div>ALT: <span class="text-white">15.2m</span></div>
+<div>SPD: <span class="text-secondary font-semibold">0.82 m/s</span></div>
+<div>HDG: <span class="text-white">142° SE</span></div>
+</div>
+<!-- Interactive Leaflet Container with Tactical Map -->
+<div class="relative w-full flex-1 bg-[#090A0F] overflow-hidden min-h-0">
+<div class="w-full h-full" id="leaflet-map"></div>
+<!-- Sleek Transect Badge -->
+<div class="absolute bottom-2 left-2 bg-black/80 backdrop-blur-md border border-white/10 px-2.5 py-1 rounded-full flex items-center gap-2 font-mono text-[8px] text-muted z-[400] pointer-events-none shadow-lg">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse glow-dot"></span>
+<span class="text-white font-semibold">TRANSECT #04</span>
+<span class="text-muted">· WP 01-08 BOUSTROPHEDON</span>
+</div>
+<!-- GPS Action Floating Toolbar -->
+<div class="absolute top-2 right-2 flex flex-col gap-1.5 z-[400]">
+<button class="w-7 h-7 bg-card-bg/90 hover:bg-white/20 backdrop-blur-md border border-white/10 rounded-lg flex items-center justify-center text-primary transition-all shadow" id="map-btn-recenter" title="Recenter GPS">
+<span class="material-symbols-outlined text-[15px]">my_location</span>
+</button>
+<button class="w-7 h-7 bg-card-bg/90 hover:bg-white/20 backdrop-blur-md border border-white/10 rounded-lg flex items-center justify-center text-secondary transition-all shadow" id="map-btn-addwp" title="Add Waypoint">
+<span class="material-symbols-outlined text-[15px]">add_location_alt</span>
+</button>
+<button class="w-7 h-7 bg-card-bg/90 hover:bg-white/20 backdrop-blur-md border border-white/10 rounded-lg flex items-center justify-center text-white transition-all shadow" id="map-btn-skipwp" title="Skip Waypoint">
+<span class="material-symbols-outlined text-[15px]">skip_next</span>
+</button>
+<button class="w-7 h-7 bg-card-bg/90 hover:bg-white/20 backdrop-blur-md border border-white/10 rounded-lg flex items-center justify-center text-pathogen transition-all shadow" id="map-btn-export" title="Export CSV">
+<span class="material-symbols-outlined text-[15px]">file_download</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 1B: BTS7960 Dual H-Bridge Motor Navigation & Speed Mixer -->
+<div class="frost-card rounded-2xl flex-1 flex flex-col min-h-0 overflow-hidden">
+<!-- Header with armed indicator -->
+<div class="h-9 px-3.5 border-b border-white/[0.06] flex items-center justify-between shrink-0 bg-white/[0.02]">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[15px]">tune</span>
+<span class="font-semibold text-[11px] tracking-wide text-white">BTS7960 Chassis Drive</span>
+</div>
+<span class="font-mono text-[9px] text-primary px-2 py-0.5 rounded-full bg-primary/10 border border-primary/25 font-bold" id="motor-status-badge">ARMED</span>
+</div>
+<div class="p-2.5 flex-1 grid grid-cols-1 md:grid-cols-2 gap-2 items-center min-h-0">
+<!-- Tactical 4-Way D-Pad -->
+<div class="flex flex-col items-center justify-center p-2 rounded-xl bg-white/[0.02] border border-white/[0.05] h-full">
+<div class="font-mono text-[9px] text-muted tracking-wider mb-2 text-center flex items-center gap-1">
+<span>VECTOR</span>
+<span class="text-[8px] text-white/50">(W/A/S/D/X)</span>
+</div>
+<div class="grid grid-cols-3 gap-1.5 w-28 h-28">
+<div></div>
+<button class="dpad-key flex flex-col items-center justify-center rounded-xl bg-white/[0.06] hover:bg-white/[0.14] active:bg-primary active:text-black border border-white/[0.08] text-white transition-all shadow-sm" data-key="w">
+<span class="material-symbols-outlined text-[16px]">arrow_drop_up</span>
+<span class="font-mono text-[8px] font-bold">W</span>
+</button>
+<div></div>
+<button class="dpad-key flex flex-col items-center justify-center rounded-xl bg-white/[0.06] hover:bg-white/[0.14] active:bg-primary active:text-black border border-white/[0.08] text-white transition-all shadow-sm" data-key="a">
+<span class="material-symbols-outlined text-[16px]">arrow_left</span>
+<span class="font-mono text-[8px] font-bold">A</span>
+</button>
+<button class="dpad-key flex flex-col items-center justify-center rounded-xl bg-hazard/20 hover:bg-hazard active:bg-red-700 border border-hazard/40 text-white transition-all shadow-sm" data-key="x">
+<span class="material-symbols-outlined text-[14px] text-hazard">stop</span>
+<span class="font-mono text-[7px] font-bold text-hazard">BRK</span>
+</button>
+<button class="dpad-key flex flex-col items-center justify-center rounded-xl bg-white/[0.06] hover:bg-white/[0.14] active:bg-primary active:text-black border border-white/[0.08] text-white transition-all shadow-sm" data-key="d">
+<span class="material-symbols-outlined text-[16px]">arrow_right</span>
+<span class="font-mono text-[8px] font-bold">D</span>
+</button>
+<div></div>
+<button class="dpad-key flex flex-col items-center justify-center rounded-xl bg-white/[0.06] hover:bg-white/[0.14] active:bg-primary active:text-black border border-white/[0.08] text-white transition-all shadow-sm" data-key="s">
+<span class="material-symbols-outlined text-[16px]">arrow_drop_down</span>
+<span class="font-mono text-[8px] font-bold">S</span>
+</button>
+<div></div>
+</div>
+</div>
+<!-- Speed Presets & PWM Waveform Gauge -->
+<div class="flex flex-col justify-between h-full gap-2">
+<!-- PWM Stat Card with Sparkline (Reference Style) -->
+<div class="rounded-xl bg-white/[0.02] border border-white/[0.05] p-2.5 relative overflow-hidden flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="text-[9px] text-muted uppercase tracking-wider font-semibold">Drive Load &amp; PWM</span>
+<span class="font-mono text-[10px] text-primary font-bold" id="pwm-readout">170 PWM / 66%</span>
+</div>
+<div class="flex items-baseline gap-2 my-1">
+<span class="text-xl font-bold text-white tracking-tight font-mono">170<span class="text-xs text-muted font-normal ml-1">PWM</span></span>
+<span class="text-[9px] text-primary font-medium px-1.5 py-0.2 rounded-full bg-primary/10 border border-primary/20">+14% load</span>
+</div>
+<!-- Sleek Sparkline Waveform -->
+<div class="w-full h-7 relative my-0.5">
+<svg class="w-full h-full text-primary" preserveaspectratio="none" viewbox="0 0 160 30">
+<defs>
+<lineargradient id="pwmGrad" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#00E676" stop-opacity="0.35"></stop>
+<stop offset="100%" stop-color="#00E676" stop-opacity="0.0"></stop>
+</lineargradient>
+</defs>
+<path d="M0,22 Q20,12 40,18 T80,8 T120,14 T160,10 L160,30 L0,30 Z" fill="url(#pwmGrad)"></path>
+<path d="M0,22 Q20,12 40,18 T80,8 T120,14 T160,10" fill="none" stroke="#00E676" stroke-width="1.8"></path>
+<circle cx="160" cy="10" fill="#00E676" r="3"></circle>
+</svg>
+</div>
+<!-- Linear Bar -->
+<div class="w-full h-1.5 bg-black/40 rounded-full overflow-hidden border border-white/5">
+<div class="h-full bg-gradient-to-r from-primary to-secondary transition-all duration-300 rounded-full" id="pwm-gauge-bar" style="width: 66%;"></div>
+</div>
+</div>
+<!-- Speed Presets Tabs -->
+<div class="grid grid-cols-3 gap-1.5">
+<button class="speed-btn py-1.5 px-1 rounded-xl bg-white/[0.04] hover:bg-white/[0.09] border border-white/[0.06] flex flex-col items-center text-center transition-all" id="btn-speed-crawl">
+<span class="text-[10px]">🐢 Crawl</span>
+<span class="font-mono text-[8px] text-muted">100 PWM</span>
+</button>
+<button class="speed-btn py-1.5 px-1 rounded-xl bg-white text-black font-semibold border border-white flex flex-col items-center text-center transition-all shadow-md" id="btn-speed-cruise">
+<span class="text-[10px]">⚡ Cruise</span>
+<span class="font-mono text-[8px] text-black/70">170 PWM</span>
+</button>
+<button class="speed-btn py-1.5 px-1 rounded-xl bg-white/[0.04] hover:bg-white/[0.09] border border-white/[0.06] flex flex-col items-center text-center transition-all" id="btn-speed-turbo">
+<span class="text-[10px]">🚀 Turbo</span>
+<span class="font-mono text-[8px] text-muted">255 PWM</span>
+</button>
+</div>
+<!-- Heatsink telemetry -->
+<div class="rounded-xl bg-white/[0.02] border border-white/[0.05] px-2.5 py-1 flex items-center justify-between font-mono text-[9px] text-muted">
+<span>HEATSINK L: <strong class="text-white font-medium">38.4°C</strong></span>
+<span>R: <strong class="text-white font-medium">39.1°C</strong></span>
+<span class="text-primary text-[8px]">NOMINAL</span>
+</div>
+</div>
+</div>
+</div>

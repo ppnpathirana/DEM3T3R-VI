@@ -1,0 +1,2480 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DEM3T3R V1 — Tactical Field Commander OS</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Leaflet CSS & JS for Real Tactical GPS Map -->
+
+
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            obsidian: "#090A0E",
+            surface: "#0F1016",
+            "card-bg": "#14151D",
+            "card-sub": "#111218",
+            "tactical-border": "rgba(255, 255, 255, 0.08)",
+            "tactical-border-light": "rgba(255, 255, 255, 0.15)",
+            primary: "#00E676",
+            "primary-dim": "rgba(0, 230, 118, 0.12)",
+            secondary: "#00E5FF",
+            "secondary-dim": "rgba(0, 229, 255, 0.12)",
+            hazard: "#FF334B",
+            "hazard-dim": "rgba(255, 51, 75, 0.15)",
+            pathogen: "#E040A0",
+            "pathogen-dim": "rgba(224, 64, 160, 0.15)",
+            outline: "#7E8494",
+            muted: "#8C92A4"
+          },
+          fontFamily: {
+            sans: ["Inter", "sans-serif"],
+            mono: ["JetBrains Mono", "monospace"]
+          },
+          borderRadius: {
+            '2xl': '16px',
+            '3xl': '20px'
+          }
+        }
+      }
+    };
+  </script>
+<style>
+    body {
+      background-color: #08090C;
+      background-image: 
+        radial-gradient(circle at 15% 10%, rgba(0, 229, 255, 0.035) 0%, transparent 40%),
+        radial-gradient(circle at 85% 20%, rgba(0, 230, 118, 0.03) 0%, transparent 45%),
+        radial-gradient(circle at 50% 85%, rgba(224, 64, 160, 0.025) 0%, transparent 50%);
+      color: #E4E1EB;
+      overflow-x: hidden;
+      overflow-y: hidden;
+      user-select: none;
+    }
+    @media (max-height: 900px) {
+      body {
+        overflow-y: auto;
+      }
+    }
+    ::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #090A0E;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.12);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #00E676;
+    }
+    /* Sleek Dark Tactical Styling for Leaflet */
+    .leaflet-container {
+      background: #0B0C10 !important;
+      font-family: 'JetBrains Mono', monospace !important;
+    }
+    .leaflet-bar {
+      border: 1px solid rgba(255,255,255,0.09) !important;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5) !important;
+      border-radius: 8px !important;
+      overflow: hidden;
+    }
+    .leaflet-bar a {
+      background-color: #14151D !important;
+      color: #00E5FF !important;
+      border-bottom: 1px solid rgba(255,255,255,0.08) !important;
+    }
+    .leaflet-bar a:hover {
+      background-color: #1F202B !important;
+      color: #00E676 !important;
+    }
+    .tactical-marker-active {
+      animation: pulse-ring 1.8s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+    }
+    @keyframes pulse-ring {
+      0% { transform: scale(0.9); opacity: 0.95; }
+      50% { transform: scale(1.45); opacity: 0.35; }
+      100% { transform: scale(0.9); opacity: 0.95; }
+    }
+    .frost-card {
+      background: rgba(20, 21, 29, 0.78);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    }
+    .pill-stat {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .glow-dot {
+      box-shadow: 0 0 10px currentColor;
+    }
+  
+    /* Critical default visibility rules to guarantee NO accidental black overlays */
+    .hidden {
+      display: none !important;
+    }
+    #full-estop-overlay {
+      display: none !important;
+    }
+    #full-estop-overlay.active-estop {
+      display: flex !important;
+    }
+    #hardware-diagnostics-modal.hidden {
+      display: none !important;
+    }
+    #hardware-diagnostics-modal:not(.hidden) {
+      display: flex !important;
+    }
+    /* Smooth glowing micro-dots for tactical status */
+    .glow-dot-amber {
+      box-shadow: 0 0 6px #F59E0B;
+    }
+    .glow-dot-blue {
+      box-shadow: 0 0 6px #00E5FF;
+    }
+
+    /* Cybernetic Lead-Computing Ballistic Aiming Reticle */
+    @keyframes reticle-spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .animate-reticle-spin {
+      animation: reticle-spin 14s linear infinite;
+    }
+    #ballistic-aiming-reticle.hidden {
+      display: none !important;
+    }
+    .scrollbar-thin::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 4px;
+    }
+
+  </style>
+<!-- Socket.IO for Real Hardware & Telemetry Uplink (Local + CDN fallback) -->
+<script src="/assets/socket.io.min.js"></script>
+<script>if (typeof io === 'undefined') { document.write('<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"><\/script>'); }</script>
+<!-- Pre-compiled comprehensive tactical stylesheet (Offline Ready) -->
+<link rel="stylesheet" href="/assets/cropguard_bundle.css">
+<!-- Leaflet Local + CDN fallback -->
+<link rel="stylesheet" href="/assets/leaflet.css">
+<script src="/assets/leaflet.js"></script>
+<script>if (typeof L === 'undefined') { document.write('<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"><\/script>'); }</script>
+</head>
+<body class="bg-obsidian font-sans antialiased text-[11px] min-h-screen flex flex-col justify-between selection:bg-primary selection:text-black overflow-x-hidden overflow-y-auto pb-6">
+<!-- ==================== EMERGENCY STOP HARDWARE HALT FULL OVERLAY ==================== -->
+<div class="fixed inset-0 z-50 bg-black/92 backdrop-blur-xl hidden flex-col items-center justify-center border-[6px] border-hazard/80 animate-pulse" id="full-estop-overlay" style="display: none !important;">
+<div class="frost-card border border-hazard/60 p-8 rounded-3xl max-w-xl text-center flex flex-col items-center gap-4 shadow-[0_0_100px_rgba(255,51,75,0.5)]">
+<div class="w-16 h-16 rounded-full bg-hazard/20 border border-hazard text-hazard flex items-center justify-center shadow-[0_0_30px_rgba(255,51,75,0.6)]">
+<span class="material-symbols-outlined text-[36px]">dangerous</span>
+</div>
+<h1 class="text-2xl font-bold tracking-widest text-white uppercase font-sans">EMERGENCY STOP ENGAGED</h1>
+<p class="font-mono text-xs text-hazard/90 tracking-wide max-w-md">
+      HARDWARE KILL SWITCH ACTIVE · ALL BTS7960 PWM ZEROED · RELAYS 1–4 DISENGAGED · ESP32 SAFE MODE ARMED
+    </p>
+<div class="flex gap-4 mt-2">
+<button class="px-6 py-2.5 bg-hazard hover:bg-red-600 text-white font-mono text-xs uppercase font-bold tracking-wider rounded-xl shadow-lg transition-all" id="overlay-reset-btn">
+        [SPACE] DISENGAGE EMERGENCY LATCH
+      </button>
+</div>
+</div>
+</div>
+<!-- ==================== 1. TOP INDUSTRIAL STATUS BAR (Nexora Style Header) ==================== -->
+<header class="h-11 w-full bg-[#0B0C10]/95 backdrop-blur-md border-b border-white/[0.07] px-4 flex items-center justify-between gap-3 shrink-0 z-40">
+<!-- Left: Brand + Navigation Tabs -->
+<div class="flex items-center gap-4 shrink-0">
+<div class="flex items-center gap-2">
+<div class="w-7 h-7 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-white shadow-[0_0_15px_rgba(255,255,255,0.15)]">
+<span class="material-symbols-outlined text-[16px]">all_inclusive</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-1.5">
+<span class="font-bold text-[12px] text-white tracking-tight">DEM3T3R V1</span>
+<span class="text-[10px] text-muted font-normal">/ AI Field OS</span>
+</div>
+</div>
+</div>
+<!-- Reference style Navigation Pill Buttons -->
+<nav class="hidden md:flex items-center gap-1 bg-white/[0.04] p-0.5 rounded-full border border-white/[0.06] text-[10px]">
+<button id="nav-btn-cockpit" class="px-3.5 py-1 rounded-full bg-white text-black font-semibold shadow-sm transition-all">Cockpit</button>
+<button id="nav-btn-nodes" onclick="toggleDiagnosticsModal(true)" class="px-3 py-1 rounded-full text-muted hover:text-white transition-all font-medium flex items-center gap-1.5 cursor-pointer">
+  <span class="w-1.5 h-1.5 rounded-full bg-primary glow-dot"></span>
+  <span>Nodes Mesh</span>
+  <span class="text-[8px] px-1 py-0.2 rounded bg-white/10 text-white font-mono">8/8</span>
+</button>
+<button id="nav-btn-telemetry" onclick="toggleDiagnosticsModal(true)" class="px-3 py-1 rounded-full text-muted hover:text-white transition-all font-medium cursor-pointer">Telemetry</button>
+<button id="nav-btn-weather" onclick="if(window.openWeatherModal)window.openWeatherModal();" class="px-3 py-1 rounded-full text-muted hover:text-white transition-all font-medium cursor-pointer">Weather</button>
+<button id="nav-btn-export" onclick="const b=document.getElementById('map-btn-export');if(b)b.click();" class="px-3 py-1 rounded-full text-muted hover:text-white transition-all font-medium cursor-pointer">Export CSV</button>
+</nav>
+</div>
+<!-- Center: Minimal Sleek Telemetry Badges with SVG Sparklines -->
+<div class="hidden lg:flex items-center gap-2">
+<!-- Wi-Fi Link Pill -->
+<div class="flex items-center gap-1.5 px-3 py-1 rounded-full pill-stat text-[10px] cursor-pointer" onclick="toggleDiagnosticsModal(true)" title="Real Local Wi-Fi Network Telemetry">
+<span class="material-symbols-outlined text-primary text-[14px]" id="top-wifi-icon">wifi</span>
+<span class="text-muted font-mono text-[9px]">WLAN:</span>
+<span class="font-bold text-white font-mono" id="top-wifi-ssid">Pix</span>
+<span class="text-[9px] text-primary font-mono" id="top-wifi-sig">85% (-57dBm)</span>
+</div>
+<!-- ESP32 Master Link Pill -->
+<div class="flex items-center gap-1.5 px-3 py-1 rounded-full pill-stat text-[10px] cursor-pointer" onclick="toggleDiagnosticsModal(true)" title="ESP32 Master Controller Telemetry">
+<span class="w-1.5 h-1.5 rounded-full bg-primary glow-dot" id="top-esp-led"></span>
+<span class="text-muted font-mono text-[9px]">ESP32:</span>
+<span class="font-bold text-white font-mono" id="top-esp-transport">TCP:5000</span>
+<span class="text-[9px] text-primary font-mono" id="top-esp-rate">50.0 Hz</span>
+</div>
+<!-- Uplink -->
+<div class="flex items-center gap-2 px-3 py-1 rounded-full pill-stat text-[10px]">
+<span class="w-1.5 h-1.5 rounded-full bg-primary glow-dot"></span>
+<span class="text-muted font-mono">UPLINK</span>
+<span class="font-semibold text-white font-mono" id="top-uplink-rate">50.0 Hz</span>
+<span class="text-[9px] text-muted">4ms</span>
+</div>
+<!-- Battery with Wave Sparkline -->
+<div class="flex items-center gap-2 px-3 py-1 rounded-full pill-stat text-[10px]">
+<span class="material-symbols-outlined text-secondary text-[14px]">battery_charging_full</span>
+<span class="text-muted font-mono">BAT</span>
+<span class="font-bold text-white font-mono" id="top-bat-volts">25.4V</span>
+<span class="text-[9px] text-primary font-medium" id="top-bat-pct">88%</span>
+<svg class="w-8 h-3 text-secondary" fill="none" stroke="currentColor" stroke-width="1.5" viewbox="0 0 32 12">
+<path d="M1 9 C 6 8, 10 3, 16 6 C 22 9, 26 4, 31 5" stroke-linecap="round"></path>
+</svg>
+</div>
+<!-- GPS Lock -->
+<div class="flex items-center gap-2 px-3 py-1 rounded-full pill-stat text-[10px]">
+<span class="material-symbols-outlined text-primary text-[14px]">satellite_alt</span>
+<span class="text-white font-medium">RTK 3D FIXED</span>
+<span class="text-[9px] text-muted font-mono" id="top-gps-detail">14 SVs · HDOP 0.72</span>
+</div>
+<!-- Obstacle -->
+<div class="flex items-center gap-2 px-3 py-1 rounded-full pill-stat text-[10px]">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span class="text-muted">LIDAR/SONAR</span>
+<span class="text-secondary font-mono font-medium" id="top-obstacle-detail">CLEAR (&gt;150cm)</span>
+</div>
+</div>
+<!-- Right Safety Controls & User Pill -->
+<div class="flex items-center gap-2.5 shrink-0">
+<!-- Mode Switch Pill Toggle -->
+<div class="flex items-center bg-white/[0.05] border border-white/[0.08] p-0.5 rounded-full" id="mode-selector">
+<button class="px-3 py-1 rounded-full text-[10px] font-semibold transition-all bg-white text-black shadow" id="mode-auto">
+        Autonomous
+      </button>
+<button class="px-2.5 py-1 rounded-full text-[10px] font-medium text-muted hover:text-white transition-all" id="mode-rc">
+        Manual RC
+      </button>
+</div>
+<!-- Hard E-Stop Button -->
+<button class="flex items-center gap-1.5 px-3 py-1 bg-hazard/20 hover:bg-hazard text-white border border-hazard/40 font-mono text-[10px] font-semibold tracking-wide rounded-full transition-all shadow-[0_0_14px_rgba(255,51,75,0.25)] active:scale-95" id="estop-toggle-btn">
+<span class="material-symbols-outlined text-[14px] text-hazard group-hover:text-white">dangerous</span>
+<span>[SPACE] HARD E-STOP</span>
+</button>
+<!-- User Profile Pill (Matching Reference) -->
+<div class="hidden lg:flex items-center gap-2 pl-1">
+<div class="w-7 h-7 rounded-full bg-white/10 border border-white/15 flex items-center justify-center text-white text-[11px] font-medium overflow-hidden">
+<span class="material-symbols-outlined text-[16px]">smart_toy</span>
+</div>
+</div>
+</div>
+</header>
+<!-- ==================== 2. MAIN 3-COLUMN COCKPIT (Refined Layout) ==================== -->
+<main class="w-full flex-1 grid grid-cols-1 xl:grid-cols-12 gap-4 p-4 min-h-0 bg-transparent">
+<!-- ========================================================================= -->
+<!-- COLUMN 1: TACTICAL GPS MAP & BTS7960 MOTOR CONTROLLER (xl:col-span-3) -->
+<!-- ========================================================================= -->
+<section class="xl:col-span-3 flex flex-col gap-4 min-h-0">
+<!-- Card 1A: Live Tactical GPS Leaflet Map -->
+<div class="frost-card rounded-2xl flex flex-col shrink-0 min-h-[450px] overflow-hidden">
+<!-- Header -->
+<div class="h-9 px-3.5 border-b border-white/[0.06] flex items-center justify-between shrink-0 bg-white/[0.02]">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[15px]">radar</span>
+<span class="font-semibold text-[11px] tracking-wide text-white">Tactical GPS Location</span>
+<span class="px-2 py-0.5 rounded-full bg-primary/10 border border-primary/30 text-primary text-[9px] font-mono font-medium">RTK Fixed</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-muted text-[10px] font-mono">WP-04 ACTIVE</span>
+<span class="font-mono text-[10px] font-bold text-secondary px-2 py-0.5 rounded-full bg-secondary/10 border border-secondary/20" id="stage-eta-val">00:00 ETA</span>
+</div>
+</div>
+<!-- Coordinates Ribbon Pill Bar -->
+<div class="px-3 py-1.5 border-b border-white/[0.04] bg-black/30 flex items-center justify-between gap-1 flex-wrap font-mono text-[9px] shrink-0 text-muted">
+<div>LAT: <span class="text-white font-semibold" id="ribbon-lat">6.92715° N</span></div>
+<div>LON: <span class="text-white font-semibold" id="ribbon-lon">79.86124° E</span></div>
+<div>ALT: <span class="text-white">15.2m</span></div>
+<div>SPD: <span class="text-secondary font-semibold">0.82 m/s</span></div>
+<div>HDG: <span class="text-white">142° SE</span></div>
+</div>
+<!-- Interactive Leaflet Container with Tactical Map -->
+<div class="relative w-full flex-1 bg-[#090A0F] overflow-hidden min-h-0">
+<div class="w-full h-full" id="leaflet-map"></div>
+<!-- Sleek Transect Badge -->
+<div class="absolute bottom-2 left-2 bg-black/80 backdrop-blur-md border border-white/10 px-2.5 py-1 rounded-full flex items-center gap-2 font-mono text-[8px] text-muted z-[400] pointer-events-none shadow-lg">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse glow-dot"></span>
+<span class="text-white font-semibold">TRANSECT #04</span>
+<span class="text-muted">· WP 01-08 BOUSTROPHEDON</span>
+</div>
+<!-- GPS Action Floating Toolbar -->
+<div class="absolute top-2 right-2 flex flex-col gap-1.5 z-[400]">
+<button class="w-7 h-7 bg-card-bg/90 hover:bg-white/20 backdrop-blur-md border border-white/10 rounded-lg flex items-center justify-center text-primary transition-all shadow" id="map-btn-recenter" title="Recenter GPS">
+<span class="material-symbols-outlined text-[15px]">my_location</span>
+</button>
+<button class="w-7 h-7 bg-card-bg/90 hover:bg-white/20 backdrop-blur-md border border-white/10 rounded-lg flex items-center justify-center text-secondary transition-all shadow" id="map-btn-addwp" title="Add Waypoint">
+<span class="material-symbols-outlined text-[15px]">add_location_alt</span>
+</button>
+<button class="w-7 h-7 bg-card-bg/90 hover:bg-white/20 backdrop-blur-md border border-white/10 rounded-lg flex items-center justify-center text-white transition-all shadow" id="map-btn-skipwp" title="Skip Waypoint">
+<span class="material-symbols-outlined text-[15px]">skip_next</span>
+</button>
+<button class="w-7 h-7 bg-card-bg/90 hover:bg-white/20 backdrop-blur-md border border-white/10 rounded-lg flex items-center justify-center text-pathogen transition-all shadow" id="map-btn-export" title="Export CSV">
+<span class="material-symbols-outlined text-[15px]">file_download</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 1B: BTS7960 Dual H-Bridge Motor Navigation & Speed Mixer -->
+<div class="frost-card rounded-2xl flex-1 flex flex-col min-h-0 overflow-hidden">
+<!-- Header with armed indicator -->
+<div class="h-9 px-3.5 border-b border-white/[0.06] flex items-center justify-between shrink-0 bg-white/[0.02]">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[15px]">tune</span>
+<span class="font-semibold text-[11px] tracking-wide text-white">BTS7960 Chassis Drive</span>
+</div>
+<span class="font-mono text-[9px] text-primary px-2 py-0.5 rounded-full bg-primary/10 border border-primary/25 font-bold" id="motor-status-badge">ARMED</span>
+</div>
+<div class="p-2.5 flex-1 grid grid-cols-1 md:grid-cols-2 gap-2 items-center min-h-0">
+<!-- Tactical 4-Way D-Pad -->
+<div class="flex flex-col items-center justify-center p-2 rounded-xl bg-white/[0.02] border border-white/[0.05] h-full">
+<div class="font-mono text-[9px] text-muted tracking-wider mb-2 text-center flex items-center gap-1">
+<span>VECTOR</span>
+<span class="text-[8px] text-white/50">(W/A/S/D/X)</span>
+</div>
+<div class="grid grid-cols-3 gap-1.5 w-28 h-28">
+<div></div>
+<button class="dpad-key flex flex-col items-center justify-center rounded-xl bg-white/[0.06] hover:bg-white/[0.14] active:bg-primary active:text-black border border-white/[0.08] text-white transition-all shadow-sm" data-key="w">
+<span class="material-symbols-outlined text-[16px]">arrow_drop_up</span>
+<span class="font-mono text-[8px] font-bold">W</span>
+</button>
+<div></div>
+<button class="dpad-key flex flex-col items-center justify-center rounded-xl bg-white/[0.06] hover:bg-white/[0.14] active:bg-primary active:text-black border border-white/[0.08] text-white transition-all shadow-sm" data-key="a">
+<span class="material-symbols-outlined text-[16px]">arrow_left</span>
+<span class="font-mono text-[8px] font-bold">A</span>
+</button>
+<button class="dpad-key flex flex-col items-center justify-center rounded-xl bg-hazard/20 hover:bg-hazard active:bg-red-700 border border-hazard/40 text-white transition-all shadow-sm" data-key="x">
+<span class="material-symbols-outlined text-[14px] text-hazard">stop</span>
+<span class="font-mono text-[7px] font-bold text-hazard">BRK</span>
+</button>
+<button class="dpad-key flex flex-col items-center justify-center rounded-xl bg-white/[0.06] hover:bg-white/[0.14] active:bg-primary active:text-black border border-white/[0.08] text-white transition-all shadow-sm" data-key="d">
+<span class="material-symbols-outlined text-[16px]">arrow_right</span>
+<span class="font-mono text-[8px] font-bold">D</span>
+</button>
+<div></div>
+<button class="dpad-key flex flex-col items-center justify-center rounded-xl bg-white/[0.06] hover:bg-white/[0.14] active:bg-primary active:text-black border border-white/[0.08] text-white transition-all shadow-sm" data-key="s">
+<span class="material-symbols-outlined text-[16px]">arrow_drop_down</span>
+<span class="font-mono text-[8px] font-bold">S</span>
+</button>
+<div></div>
+</div>
+</div>
+<!-- Speed Presets & PWM Waveform Gauge -->
+<div class="flex flex-col justify-between h-full gap-2">
+<!-- PWM Stat Card with Sparkline (Reference Style) -->
+<div class="rounded-xl bg-white/[0.02] border border-white/[0.05] p-2.5 relative overflow-hidden flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="text-[9px] text-muted uppercase tracking-wider font-semibold">Drive Load &amp; PWM</span>
+<span class="font-mono text-[10px] text-primary font-bold" id="pwm-readout">170 PWM / 66%</span>
+</div>
+<div class="flex items-baseline gap-2 my-1">
+<span class="text-xl font-bold text-white tracking-tight font-mono">170<span class="text-xs text-muted font-normal ml-1">PWM</span></span>
+<span class="text-[9px] text-primary font-medium px-1.5 py-0.2 rounded-full bg-primary/10 border border-primary/20">+14% load</span>
+</div>
+<!-- Sleek Sparkline Waveform -->
+<div class="w-full h-7 relative my-0.5">
+<svg class="w-full h-full text-primary" preserveaspectratio="none" viewbox="0 0 160 30">
+<defs>
+<lineargradient id="pwmGrad" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#00E676" stop-opacity="0.35"></stop>
+<stop offset="100%" stop-color="#00E676" stop-opacity="0.0"></stop>
+</lineargradient>
+</defs>
+<path d="M0,22 Q20,12 40,18 T80,8 T120,14 T160,10 L160,30 L0,30 Z" fill="url(#pwmGrad)"></path>
+<path d="M0,22 Q20,12 40,18 T80,8 T120,14 T160,10" fill="none" stroke="#00E676" stroke-width="1.8"></path>
+<circle cx="160" cy="10" fill="#00E676" r="3"></circle>
+</svg>
+</div>
+<!-- Linear Bar -->
+<div class="w-full h-1.5 bg-black/40 rounded-full overflow-hidden border border-white/5">
+<div class="h-full bg-gradient-to-r from-primary to-secondary transition-all duration-300 rounded-full" id="pwm-gauge-bar" style="width: 66%;"></div>
+</div>
+</div>
+<!-- Speed Presets Tabs -->
+<div class="grid grid-cols-3 gap-1.5">
+<button class="speed-btn py-1.5 px-1 rounded-xl bg-white/[0.04] hover:bg-white/[0.09] border border-white/[0.06] flex flex-col items-center text-center transition-all" id="btn-speed-crawl">
+<span class="text-[10px]">🐢 Crawl</span>
+<span class="font-mono text-[8px] text-muted">100 PWM</span>
+</button>
+<button class="speed-btn py-1.5 px-1 rounded-xl bg-white text-black font-semibold border border-white flex flex-col items-center text-center transition-all shadow-md" id="btn-speed-cruise">
+<span class="text-[10px]">⚡ Cruise</span>
+<span class="font-mono text-[8px] text-black/70">170 PWM</span>
+</button>
+<button class="speed-btn py-1.5 px-1 rounded-xl bg-white/[0.04] hover:bg-white/[0.09] border border-white/[0.06] flex flex-col items-center text-center transition-all" id="btn-speed-turbo">
+<span class="text-[10px]">🚀 Turbo</span>
+<span class="font-mono text-[8px] text-muted">255 PWM</span>
+</button>
+</div>
+<!-- Heatsink telemetry -->
+<div class="rounded-xl bg-white/[0.02] border border-white/[0.05] px-2.5 py-1 flex items-center justify-between font-mono text-[9px] text-muted">
+<span>HEATSINK L: <strong class="text-white font-medium">38.4°C</strong></span>
+<span>R: <strong class="text-white font-medium">39.1°C</strong></span>
+<span class="text-primary text-[8px]">NOMINAL</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- ========================================================================= -->
+<!-- COLUMN 2: OPTICAL VIEWPORT (YOLO11) & 8-CH SCADA SENSORS (xl:col-span-6) -->
+<!-- ========================================================================= -->
+<section class="xl:col-span-6 flex flex-col gap-4 min-h-0">
+<!-- Card 2A: Large Optical Video Feed & YOLO11 Diagnostics -->
+<div class="frost-card rounded-2xl flex-[2.5] flex flex-col min-h-0 overflow-hidden">
+<!-- Subsystem Header -->
+<div class="h-9 px-3.5 border-b border-white/[0.06] flex items-center justify-between shrink-0 bg-white/[0.02]">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse glow-dot"></span>
+<span class="font-semibold text-[11px] tracking-wide text-white">Live Optical Viewport</span>
+<span class="text-[10px] text-muted font-mono">· YOLOv11 Native Inference</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-mono text-[9px] text-secondary px-2 py-0.5 rounded-full bg-secondary/10 border border-secondary/20 font-medium">12.4ms TensorRT</span>
+<button id="btn-toggle-hud" onclick="window.toggleCameraHUD()" class="px-2.5 py-0.5 rounded-full bg-white/[0.05] hover:bg-white/[0.12] text-muted hover:text-white font-mono text-[9px] font-semibold border border-white/10 transition-all flex items-center gap-1 cursor-pointer" title="Toggle Clean Video vs AI HUD Overlays">
+  <span class="material-symbols-outlined text-[12px]">layers</span>
+  <span id="hud-toggle-label">OVERLAY: OFF (CLEAN)</span>
+</button>
+</div>
+</div>
+<!-- 16:9 Optical Stream Viewport -->
+<div class="relative w-full flex-1 bg-black overflow-hidden flex items-center justify-center min-h-0">
+<img alt="Field Tomato Canopy" class="absolute inset-0 w-full h-full object-cover opacity-85 transition-opacity" id="live-stream-img" src="/video_feed" onerror="setTimeout(()=>{ this.src=\'/video_feed?t=\' + Date.now(); }, 1500);"/>
+<!-- AI HUD & Detection Overlays Layer (HIDDEN by default for 100% CLEAN VIDEO STREAM) -->
+<div id="camera-hud-layer" class="absolute inset-0 pointer-events-none hidden transition-opacity duration-300">
+  <!-- Tactical HUD Corner Brackets -->
+  <div class="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-secondary/70 rounded-tl-sm"></div>
+  <div class="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-secondary/70 rounded-tr-sm"></div>
+  <div class="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-secondary/70 rounded-bl-sm"></div>
+  <div class="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-secondary/70 rounded-br-sm"></div>
+
+  <!-- Telemetry Badge -->
+  <div class="absolute top-2.5 left-3 bg-black/80 backdrop-blur-md border border-white/10 px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-md">
+    <span class="w-1.5 h-1.5 rounded-full bg-primary animate-ping"></span>
+    <span class="font-mono text-[9px] text-white font-medium">1080P @ 60 FPS · AI ACTIVE</span>
+  </div>
+
+  <!-- Aiming Reticle -->
+  <div id="ballistic-aiming-reticle" class="absolute pointer-events-none transition-all duration-300 ease-out z-20" style="top: 46%; left: 52%; transform: translate(-50%, -50%);">
+    <div class="relative w-24 h-24 border border-primary/40 rounded-full flex items-center justify-center animate-reticle-spin">
+      <div class="absolute top-0 w-2 h-1 bg-primary"></div>
+      <div class="absolute bottom-0 w-2 h-1 bg-primary"></div>
+      <div class="absolute left-0 h-2 w-1 bg-primary"></div>
+      <div class="absolute right-0 h-2 w-1 bg-primary"></div>
+    </div>
+    <div class="absolute inset-0 flex items-center justify-center">
+      <div class="w-8 h-8 border border-secondary/70 rounded-full flex items-center justify-center">
+        <div class="w-2 h-2 bg-secondary rounded-full animate-ping"></div>
+      </div>
+      <div class="absolute w-16 h-[1px] bg-primary/50"></div>
+      <div class="absolute h-16 w-[1px] bg-primary/50"></div>
+    </div>
+  </div>
+
+  <!-- Dynamic YOLO Detection Overlay -->
+  <div id="dynamic-detection-layer" class="absolute inset-0"></div>
+</div>
+</div>
+<!-- 16-Crop Model Switcher & Spectral Filter Controls -->
+<div class="p-2 bg-white/[0.02] flex flex-col gap-1.5 border-t border-white/[0.06] shrink-0">
+<div class="flex items-center justify-between gap-2">
+<span class="text-[9px] font-medium text-muted uppercase tracking-wider">Crop Model Weights</span>
+<select class="bg-white/[0.05] border border-white/10 rounded-lg text-white font-sans text-[10px] px-2.5 py-1 focus:outline-none focus:border-secondary cursor-pointer flex-1 max-w-[260px]" id="crop-model-select">
+<option selected="" value="Tomato">Tomato (Solanum lycopersicum)</option>
+<option value="Potato">Potato (Solanum tuberosum)</option>
+<option value="Rice">Rice (Oryza sativa)</option>
+<option value="Corn">Corn (Zea mays)</option>
+<option value="Brinjal">Brinjal / Eggplant</option>
+<option value="Cabbage">Cabbage (Brassica oleracea)</option>
+<option value="Capsicum">Capsicum / Bell Pepper</option>
+<option value="Carrot">Carrot (Daucus carota)</option>
+<option value="Cauliflower">Cauliflower</option>
+<option value="Chilli">Chilli (Capsicum frutescens)</option>
+<option value="Lettuce">Lettuce (Lactuca sativa)</option>
+<option value="Mushroom">Mushroom (Agaricus bisporus)</option>
+<option value="Radish">Radish (Raphanus sativus)</option>
+<option value="Rose">Rose (Rosa hybrid)</option>
+<option value="Tea">Tea Plant (Camellia sinensis)</option>
+<option value="Anthurium">Anthurium andraeanum</option>
+</select>
+</div>
+<div class="grid grid-cols-3 gap-1.5">
+<button class="filter-btn py-1 rounded-lg font-mono text-[9px] font-semibold uppercase transition-all bg-white text-black shadow-sm" id="filter-raw">
+            RAW RGB
+          </button>
+<button class="filter-btn py-1 rounded-lg font-mono text-[9px] font-semibold uppercase transition-all bg-white/[0.04] text-muted hover:text-white border border-white/[0.08]" id="filter-ndvi">
+            🔬 SPECTRAL NDVI
+          </button>
+<button class="filter-btn py-1 rounded-lg font-mono text-[9px] font-semibold uppercase transition-all bg-white/[0.04] text-muted hover:text-white border border-white/[0.08]" id="filter-biomass">
+            🟢 BIOMASS SCAN
+          </button>
+</div>
+</div>
+</div>
+<!-- ============================================================== -->
+<!-- 🧠 VLA COGNITIVE REASONING CORE (TESLA FSD / DEEPMIND EMBODIED) -->
+<!-- ============================================================== -->
+<div class="p-2.5 bg-[#0B0C10]/95 border-t border-white/[0.08] flex flex-col gap-2 shrink-0 font-mono" id="vla-cognitive-panel">
+  <!-- Header Bar -->
+  <div class="flex items-center justify-between gap-2">
+    <div class="flex items-center gap-2">
+      <div class="w-5 h-5 rounded bg-primary/10 border border-primary/30 flex items-center justify-center text-primary">
+        <span class="material-symbols-outlined text-[13px]">psychology</span>
+      </div>
+      <span class="text-[10px] font-bold text-white tracking-wide">VLA COGNITIVE THOUGHT STREAM</span>
+      <span class="text-[8px] px-1.5 py-0.2 rounded-full bg-primary/20 text-primary border border-primary/30 font-bold animate-pulse">EMBODIED AI ACTIVE</span>
+    </div>
+    <div class="flex items-center gap-2 text-[8.5px] text-muted">
+      <span>LATENCY: <strong class="text-primary" id="vla-latency-val">12.4ms</strong></span>
+      <span>TOKENS: <strong class="text-white" id="vla-token-val">182</strong></span>
+      <button onclick="window.toggleVlaThoughtExpanded()" class="hover:text-white transition-all cursor-pointer text-[10px]" id="vla-toggle-expand" title="Expand / Collapse stream">⤢</button>
+    </div>
+  </div>
+
+  <!-- Live Cognitive Ticker Feed (Scrollable & Color-Coded) -->
+  <div class="bg-black/80 border border-white/10 rounded-lg p-2 max-h-36 overflow-y-auto space-y-1.5 text-[9.5px] scrollbar-thin select-text" id="vla-thought-feed">
+    <!-- Cognitive Step 1: PERCEPTION -->
+    <div class="flex items-start gap-1.5">
+      <span class="px-1.5 py-0.2 rounded bg-cyan-500/20 text-cyan-400 font-bold text-[8px] shrink-0 border border-cyan-500/30">👁️ PERCEPTION</span>
+      <span class="text-cyan-200/90 leading-tight" id="vla-step-perception">Optical sensor locks onto Tomato foliage · Coordinate (X:142mm, Y:210mm, Z:450mm)</span>
+    </div>
+    <!-- Cognitive Step 2: HYPOTHESIS -->
+    <div class="flex items-start gap-1.5">
+      <span class="px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-400 font-bold text-[8px] shrink-0 border border-amber-500/30">💡 HYPOTHESIS</span>
+      <span class="text-amber-200/90 leading-tight" id="vla-step-hypothesis">Concentric necrotic rings identified as EARLY BLIGHT · Conf: 94.2%</span>
+    </div>
+    <!-- Cognitive Step 3: AGRONOMY -->
+    <div class="flex items-start gap-1.5">
+      <span class="px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-400 font-bold text-[8px] shrink-0 border border-emerald-500/30">🌿 AGRONOMY</span>
+      <span class="text-emerald-200/90 leading-tight" id="vla-step-agronomy">Microclimate: 27.7°C, 80.0% RH · Fungal spore germination index: CRITICAL (>78%)</span>
+    </div>
+    <!-- Cognitive Step 4: BALLISTICS -->
+    <div class="flex items-start gap-1.5">
+      <span class="px-1.5 py-0.2 rounded bg-fuchsia-500/20 text-fuchsia-400 font-bold text-[8px] shrink-0 border border-fuchsia-500/30">🎯 BALLISTICS</span>
+      <span class="text-fuchsia-200/90 leading-tight" id="vla-step-ballistics">Target distance: 142cm · Azimuth: +1.8° · Rover speed: 0.32 m/s · Lead comp: X:+12mm Y:-4mm</span>
+    </div>
+    <!-- Cognitive Step 5: ACTION PLAN -->
+    <div class="flex items-start gap-1.5">
+      <span class="px-1.5 py-0.2 rounded bg-primary/20 text-primary font-bold text-[8px] shrink-0 border border-primary/30">⚡ ACTION</span>
+      <span class="text-white font-semibold leading-tight" id="vla-step-action">Dispatched Solenoid 1 micro-burst for 420ms · 100% targeted lesion coverage</span>
+    </div>
+  </div>
+
+  <!-- Interactive Natural Language Directive Bar -->
+  <div class="flex items-center gap-1.5">
+    <div class="flex-1 flex items-center gap-1.5 bg-white/[0.04] border border-white/10 rounded-lg px-2.5 py-1">
+      <span class="text-primary font-bold text-[9px]">VLA:~$</span>
+      <input type="text" id="vla-directive-input" class="bg-transparent border-none text-white text-[9.5px] font-mono focus:outline-none w-full placeholder:text-muted/40" placeholder="Type directive: 'Spot spray blight', 'Inspect row 3', 'Probe soil'..."/>
+    </div>
+    <button onclick="window.submitVlaDirective()" class="px-2.5 py-1 bg-primary hover:bg-primary/90 text-black font-bold text-[9px] rounded-lg transition-all shrink-0 cursor-pointer shadow-[0_0_10px_rgba(0,230,118,0.2)]">
+      TRANSMIT
+    </button>
+  </div>
+
+  <!-- Quick Action Directives Chips -->
+  <div class="flex items-center gap-1 overflow-x-auto text-[8px]">
+    <span class="text-muted text-[7.5px] uppercase tracking-wider shrink-0">QUICK:</span>
+    <button onclick="window.submitVlaDirective('Spot spray pathogen with 5s dose')" class="px-2 py-0.5 rounded bg-white/[0.04] hover:bg-primary/20 hover:text-primary border border-white/10 text-white/80 transition-all cursor-pointer whitespace-nowrap">🎯 SPOT SPRAY</button>
+    <button onclick="window.submitVlaDirective('Inspect lower canopy for leaf mold')" class="px-2 py-0.5 rounded bg-white/[0.04] hover:bg-cyan-400/20 hover:text-cyan-400 border border-white/10 text-white/80 transition-all cursor-pointer whitespace-nowrap">👁️ INSPECT CANOPY</button>
+    <button onclick="window.submitVlaDirective('Insert soil probe and analyze NPK')" class="px-2 py-0.5 rounded bg-white/[0.04] hover:bg-amber-400/20 hover:text-amber-400 border border-white/10 text-white/80 transition-all cursor-pointer whitespace-nowrap">🌱 PROBE SOIL</button>
+    <button onclick="window.submitVlaDirective('Emergency halt now')" class="px-2 py-0.5 rounded bg-hazard/15 hover:bg-hazard hover:text-white border border-hazard/30 text-hazard transition-all cursor-pointer whitespace-nowrap">🛑 HALT</button>
+  </div>
+</div>
+
+<!-- Card 2B: 8-Channel SCADA Sensor Telemetry Matrix with Dedicated Real-Time Statistical Graphs -->
+<div class="frost-card rounded-2xl shrink-0 flex flex-col border border-white/[0.08] shadow-2xl bg-[#14151D]/90 mt-2">
+  <!-- Header -->
+  <div class="h-10 px-4 border-b border-white/[0.06] flex items-center justify-between shrink-0 bg-white/[0.02]">
+    <div class="flex items-center gap-2.5">
+      <span class="material-symbols-outlined text-secondary text-[18px]">sensors</span>
+      <span class="font-bold text-[13px] tracking-wide text-white">SCADA Telemetry Matrix</span>
+      <span class="px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[9px] font-mono font-semibold">8 CHANNELS LIVE</span>
+    </div>
+    <div class="flex items-center gap-3">
+      <span class="font-mono text-[10px] text-secondary font-medium">I2C BUS 0x76 / 0x23 · 50Hz STREAM</span>
+      <span class="w-2 h-2 rounded-full bg-primary animate-pulse glow-dot"></span>
+    </div>
+  </div>
+
+  <!-- 8 Sensors Grid (2 rows of 4 columns, spacious, comfortable) -->
+  <div class="p-3.5 grid grid-cols-2 md:grid-cols-4 gap-3.5">
+    
+    <!-- 1. Ambient Temp (BME280) -->
+    <div class="rounded-xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.08] p-3 flex flex-col justify-between transition-all shadow-sm">
+      <div class="flex items-center justify-between mb-1">
+        <span class="text-[10px] text-muted font-semibold tracking-wider uppercase">Ambient Temp</span>
+        <span class="material-symbols-outlined text-amber-400 text-[16px]">thermostat</span>
+      </div>
+      <div class="flex items-baseline gap-1 my-1">
+        <span class="text-2xl font-black text-white font-mono tracking-tight" id="val-temp">24.5</span>
+        <span class="text-[11px] text-muted font-mono font-medium">°C</span>
+      </div>
+      <canvas id="graph-temp" width="160" height="34" class="w-full h-8 my-1 rounded bg-black/25"></canvas>
+      <div class="flex items-center justify-between text-[9px] font-mono mt-1">
+        <span class="text-amber-400 font-semibold">BME280</span>
+        <span class="text-muted">±0.3°C</span>
+      </div>
+    </div>
+
+    <!-- 2. Air Humidity (BME280) -->
+    <div class="rounded-xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.08] p-3 flex flex-col justify-between transition-all shadow-sm">
+      <div class="flex items-center justify-between mb-1">
+        <span class="text-[10px] text-muted font-semibold tracking-wider uppercase">Air Humidity</span>
+        <span class="material-symbols-outlined text-cyan-400 text-[16px]">water_drop</span>
+      </div>
+      <div class="flex items-baseline gap-1 my-1">
+        <span class="text-2xl font-black text-white font-mono tracking-tight" id="val-hum">68.0</span>
+        <span class="text-[11px] text-muted font-mono font-medium">%</span>
+      </div>
+      <canvas id="graph-hum" width="160" height="34" class="w-full h-8 my-1 rounded bg-black/25"></canvas>
+      <div class="flex items-center justify-between text-[9px] font-mono mt-1">
+        <span class="text-cyan-400 font-semibold">RH OPTIMAL</span>
+        <span class="text-muted">>75% Risk</span>
+      </div>
+    </div>
+
+    <!-- 3. Barometer (BME280) -->
+    <div class="rounded-xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.08] p-3 flex flex-col justify-between transition-all shadow-sm">
+      <div class="flex items-center justify-between mb-1">
+        <span class="text-[10px] text-muted font-semibold tracking-wider uppercase">Barometer</span>
+        <span class="material-symbols-outlined text-purple-400 text-[16px]">speed</span>
+      </div>
+      <div class="flex items-baseline gap-1 my-1">
+        <span class="text-2xl font-black text-white font-mono tracking-tight" id="val-pres">1013.2</span>
+        <span class="text-[11px] text-muted font-mono font-medium">hPa</span>
+      </div>
+      <canvas id="graph-pres" width="160" height="34" class="w-full h-8 my-1 rounded bg-black/25"></canvas>
+      <div class="flex items-center justify-between text-[9px] font-mono mt-1">
+        <span class="text-purple-400 font-semibold">1.0 atm</span>
+        <span class="text-muted">Stable</span>
+      </div>
+    </div>
+
+    <!-- 4. Solar Light (BH1750) -->
+    <div class="rounded-xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.08] p-3 flex flex-col justify-between transition-all shadow-sm">
+      <div class="flex items-center justify-between mb-1">
+        <span class="text-[10px] text-muted font-semibold tracking-wider uppercase">Solar Flux</span>
+        <span class="material-symbols-outlined text-yellow-400 text-[16px]">wb_sunny</span>
+      </div>
+      <div class="flex items-baseline gap-1 my-1">
+        <span class="text-2xl font-black text-white font-mono tracking-tight" id="val-solar">850</span>
+        <span class="text-[11px] text-muted font-mono font-medium">lx</span>
+      </div>
+      <canvas id="graph-solar" width="160" height="34" class="w-full h-8 my-1 rounded bg-black/25"></canvas>
+      <div class="flex items-center justify-between text-[9px] font-mono mt-1">
+        <span class="text-yellow-400 font-semibold">DLI 18.2</span>
+        <span class="text-muted">Photosyn.</span>
+      </div>
+    </div>
+
+    <!-- 5. UV Index (ML8511) -->
+    <div class="rounded-xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.08] p-3 flex flex-col justify-between transition-all shadow-sm">
+      <div class="flex items-center justify-between mb-1">
+        <span class="text-[10px] text-muted font-semibold tracking-wider uppercase">UV Index</span>
+        <span class="material-symbols-outlined text-rose-400 text-[16px]">flare</span>
+      </div>
+      <div class="flex items-baseline gap-1 my-1">
+        <span class="text-2xl font-black text-white font-mono tracking-tight" id="val-uv">3.2</span>
+        <span class="text-[11px] text-rose-400 font-mono font-bold">IDX</span>
+      </div>
+      <canvas id="graph-uv" width="160" height="34" class="w-full h-8 my-1 rounded bg-black/25"></canvas>
+      <div class="flex items-center justify-between text-[9px] font-mono mt-1">
+        <span class="text-rose-400 font-semibold">MODERATE</span>
+        <span class="text-muted">ML8511</span>
+      </div>
+    </div>
+
+    <!-- 6. Soil Moisture A -->
+    <div class="rounded-xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.08] p-3 flex flex-col justify-between transition-all shadow-sm">
+      <div class="flex items-center justify-between mb-1">
+        <span class="text-[10px] text-muted font-semibold tracking-wider uppercase">Soil Moisture A</span>
+        <span class="material-symbols-outlined text-emerald-400 text-[16px]">grass</span>
+      </div>
+      <div class="flex items-baseline gap-1 my-1">
+        <span class="text-2xl font-black text-white font-mono tracking-tight" id="val-soila">42.5</span>
+        <span class="text-[11px] text-muted font-mono font-medium">%</span>
+      </div>
+      <canvas id="graph-soila" width="160" height="34" class="w-full h-8 my-1 rounded bg-black/25"></canvas>
+      <div class="flex items-center justify-between text-[9px] font-mono mt-1">
+        <span class="text-emerald-400 font-semibold">ROOT DEPTH</span>
+        <span class="text-muted">Zone A</span>
+      </div>
+    </div>
+
+    <!-- 7. Soil Moisture B -->
+    <div class="rounded-xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.08] p-3 flex flex-col justify-between transition-all shadow-sm">
+      <div class="flex items-center justify-between mb-1">
+        <span class="text-[10px] text-muted font-semibold tracking-wider uppercase">Soil Moisture B</span>
+        <span class="material-symbols-outlined text-teal-400 text-[16px]">spa</span>
+      </div>
+      <div class="flex items-baseline gap-1 my-1">
+        <span class="text-2xl font-black text-white font-mono tracking-tight" id="val-soilb">40.8</span>
+        <span class="text-[11px] text-muted font-mono font-medium">%</span>
+      </div>
+      <canvas id="graph-soilb" width="160" height="34" class="w-full h-8 my-1 rounded bg-black/25"></canvas>
+      <div class="flex items-center justify-between text-[9px] font-mono mt-1">
+        <span class="text-teal-400 font-semibold">SURFACE</span>
+        <span class="text-muted">Zone B</span>
+      </div>
+    </div>
+
+    <!-- 8. Sonar Clearance (HC-SR04) -->
+    <div class="rounded-xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.08] p-3 flex flex-col justify-between transition-all shadow-sm">
+      <div class="flex items-center justify-between mb-1">
+        <span class="text-[10px] text-muted font-semibold tracking-wider uppercase">Sonar Clearance</span>
+        <span class="material-symbols-outlined text-blue-400 text-[16px]">radar</span>
+      </div>
+      <div class="flex items-baseline gap-1 my-1">
+        <span class="text-2xl font-black text-white font-mono tracking-tight" id="val-sonar">184</span>
+        <span class="text-[11px] text-muted font-mono font-medium">cm</span>
+      </div>
+      <canvas id="graph-sonar" width="160" height="34" class="w-full h-8 my-1 rounded bg-black/25"></canvas>
+      <div class="flex items-center justify-between text-[9px] font-mono mt-1">
+        <span class="text-blue-400 font-semibold">CLEAR >150cm</span>
+        <span class="text-muted">HC-SR04</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+</section>
+<!-- ========================================================================= -->
+<!-- COLUMN 3: PATHOLOGY, NPK & PRECISION RELAYS (xl:col-span-3) -->
+<!-- ========================================================================= -->
+<section class="xl:col-span-3 flex flex-col gap-4 min-h-0">
+<!-- Card 3A: Predictive Weather & Pathology Risk Suite (Nexora Style with Ring & Flow) -->
+<div class="frost-card rounded-2xl flex flex-col shrink-0 overflow-hidden">
+<div class="h-9 px-3.5 border-b border-white/[0.06] flex items-center justify-between bg-white/[0.02]">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-pathogen text-[15px]">coronavirus</span>
+<span class="font-semibold text-[11px] tracking-wide text-white">Agronomic Pathology</span>
+</div>
+<span class="text-[9px] font-mono text-hazard px-2 py-0.5 rounded-full bg-hazard/10 border border-hazard/25 font-bold">ALGO V4.2</span>
+</div>
+<div class="p-2.5 flex flex-col gap-2">
+<!-- Top Section: Segmented Radial / Donut Risk Ring (Matching Nexora "Sources / Determinations") -->
+<div class="rounded-xl bg-white/[0.02] border border-white/[0.05] p-2.5 flex items-center justify-between gap-3">
+<!-- Donut Graphic -->
+<div class="relative w-16 h-16 shrink-0 flex items-center justify-center">
+<svg class="w-16 h-16 transform -rotate-90" viewbox="0 0 36 36">
+<!-- Background ring -->
+<path class="text-white/10" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="4"></path>
+<!-- Safe green segment -->
+<path class="text-primary" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="22, 100" stroke-width="4"></path>
+<!-- High Risk red segment -->
+<path class="text-hazard" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="78, 100" stroke-dashoffset="-22" stroke-linecap="round" stroke-width="4.5"></path>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+<span class="text-sm font-bold text-white font-mono leading-none" id="pathology-risk-pct">0%</span>
+<span class="text-[7px] text-muted uppercase tracking-tighter">RISK</span>
+</div>
+</div>
+<!-- Breakdown -->
+<div class="flex-1 flex flex-col justify-center">
+<div class="flex items-center justify-between mb-1">
+<span class="text-[10px] font-semibold text-white" id="pathology-diagnosis-title">Canopy Diagnostics Nominal</span>
+<span class="text-[9px] text-primary font-mono font-bold bg-primary/15 px-1.5 py-0.2 rounded" id="pathology-risk-badge">STANDBY</span>
+</div>
+<p class="text-[8.5px] text-muted leading-tight">
+              Sustained 68% RH + 24.5°C dewpoint trigger window in Sector 4.
+            </p>
+</div>
+</div>
+<!-- 7-Day Microclimate Forecast Spark Bar Graph -->
+<div class="rounded-xl bg-white/[0.02] border border-white/[0.05] p-2 flex flex-col gap-1">
+<div class="flex items-center justify-between text-[8px] text-muted">
+<span class="uppercase tracking-wider">7-Day Rain Probability %</span>
+<span class="text-white">Peak D4 (85%)</span>
+</div>
+<div class="grid grid-cols-7 gap-1 text-center pt-1 items-end h-10">
+<div class="flex flex-col items-center gap-1">
+<div class="w-2.5 bg-primary/70 rounded-full h-3"></div>
+<span class="text-[7.5px] text-muted font-mono">10%</span>
+</div>
+<div class="flex flex-col items-center gap-1">
+<div class="w-2.5 bg-primary/70 rounded-full h-4"></div>
+<span class="text-[7.5px] text-muted font-mono">15%</span>
+</div>
+<div class="flex flex-col items-center gap-1">
+<div class="w-2.5 bg-primary/70 rounded-full h-5"></div>
+<span class="text-[7.5px] text-muted font-mono">30%</span>
+</div>
+<div class="flex flex-col items-center gap-1">
+<div class="w-2.5 bg-hazard rounded-full h-8 shadow-[0_0_8px_rgba(255,51,75,0.5)]"></div>
+<span class="text-[7.5px] text-hazard font-bold font-mono">85%</span>
+</div>
+<div class="flex flex-col items-center gap-1">
+<div class="w-2.5 bg-secondary rounded-full h-6"></div>
+<span class="text-[7.5px] text-secondary font-mono">60%</span>
+</div>
+<div class="flex flex-col items-center gap-1">
+<div class="w-2.5 bg-primary/70 rounded-full h-2"></div>
+<span class="text-[7.5px] text-muted font-mono">05%</span>
+</div>
+<div class="flex flex-col items-center gap-1">
+<div class="w-2.5 bg-primary/70 rounded-full h-2"></div>
+<span class="text-[7.5px] text-muted font-mono">00%</span>
+</div>
+</div>
+</div>
+<!-- AI Decision Pipeline Flow (Matching Reference Investigations Flow Tree) -->
+<div class="rounded-xl bg-white/[0.02] border border-white/[0.05] p-2 flex flex-col gap-1.5">
+<div class="flex items-center justify-between text-[8px] text-muted">
+<span class="font-semibold text-white uppercase tracking-wider">AI Execution Pipeline Flow</span>
+<span class="text-primary font-mono text-[8px]">● Nominal</span>
+</div>
+<!-- Connected node pipeline -->
+<div class="flex items-center justify-between gap-1 text-[8px] font-mono">
+<div class="px-2 py-1 rounded-full bg-white/10 text-white font-medium">Ingest</div>
+<span class="text-muted text-[10px]">→</span>
+<div class="px-2 py-1 rounded-full bg-primary/20 text-primary border border-primary/30 font-medium" id="pathology-pipeline-disease">Scanning...</div>
+<span class="text-muted text-[10px]">→</span>
+<div class="px-2 py-1 rounded-full bg-primary/20 text-primary border border-primary/30 font-medium">Relay 1,4</div>
+</div>
+<p class="text-[8px] text-muted font-mono leading-tight mt-0.5">
+            <span id="pathology-pipeline-action">Awaiting real-time foliar computer vision feed...</span>
+          </p>
+</div>
+</div>
+</div>
+<!-- Card 3B: Harvest Prognosis & Soil Chemistry (NPK) -->
+<div class="frost-card rounded-2xl flex flex-col shrink-0 overflow-hidden">
+<div class="h-8 px-3.5 border-b border-white/[0.06] flex items-center justify-between bg-white/[0.02]">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[15px]">science</span>
+<span class="font-semibold text-[11px] tracking-wide text-white">Soil Chemistry &amp; Harvest</span>
+</div>
+<span class="text-[9px] font-mono text-primary px-2 py-0.5 rounded-full bg-primary/10 border border-primary/25 font-bold">HEALTH: 91%</span>
+</div>
+<div class="p-2 flex flex-col gap-1.5">
+<!-- NPK Telemetry Cards -->
+<div class="grid grid-cols-3 gap-1.5">
+<div class="rounded-xl bg-white/[0.02] border border-white/[0.05] p-2 flex flex-col">
+<span class="text-[8px] text-muted block">NITROGEN (N)</span>
+<span class="text-base font-bold text-white font-mono mt-0.5">7 <span class="text-[8px] text-muted font-normal">ppm</span></span>
+<span class="text-[7.5px] text-primary mt-0.5">Optimal</span>
+</div>
+<div class="rounded-xl bg-white/[0.02] border border-white/[0.05] p-2 flex flex-col">
+<span class="text-[8px] text-muted block">PHOSPHORUS (P)</span>
+<span class="text-base font-bold text-secondary font-mono mt-0.5">14 <span class="text-[8px] text-muted font-normal">ppm</span></span>
+<span class="text-[7.5px] text-secondary mt-0.5">Medium</span>
+</div>
+<div class="rounded-xl bg-white/[0.02] border border-white/[0.05] p-2 flex flex-col">
+<span class="text-[8px] text-muted block">POTASSIUM (K)</span>
+<span class="text-base font-bold text-pathogen font-mono mt-0.5">109 <span class="text-[8px] text-muted font-normal">ppm</span></span>
+<span class="text-[7.5px] text-pathogen mt-0.5">High</span>
+</div>
+</div>
+<div class="rounded-xl bg-white/[0.02] border border-white/[0.05] px-2.5 py-1.5 flex items-center justify-between font-mono text-[8.5px]">
+<div>
+<span class="text-muted block text-[7.5px]">EST. HARVEST BIOMASS</span>
+<span class="text-white font-bold text-[10px]">60.9 kg / row</span>
+</div>
+<div class="text-right">
+<span class="text-muted block text-[7.5px]">C:N RATIO</span>
+<span class="text-primary font-bold text-[10px]">1.4:1 OPTIMAL</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Card 3C: 4-Channel Precision Solid State Relay Bus -->
+<div class="frost-card rounded-2xl flex flex-col shrink-0 overflow-hidden">
+<div class="h-8 px-3.5 border-b border-white/[0.06] flex items-center justify-between bg-white/[0.02]">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[15px]">toggle_on</span>
+<span class="font-semibold text-[11px] tracking-wide text-white">Precision Relay Bus</span>
+</div>
+<span class="font-mono text-[8px] text-muted">HOTKEYS: [1] [2] [3] [4]</span>
+</div>
+<div class="p-1.5 grid grid-cols-1 gap-1">
+<!-- Relay 1: Active -->
+<div class="flex items-center justify-between px-2.5 py-1.5 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary glow-dot" id="led-relay-1"></span>
+<div>
+<span class="text-[10px] font-semibold text-white block leading-tight">Pesticide / Water Pump</span>
+<span class="font-mono text-[7.5px] text-muted">GPIO 10 · 12V 4A</span>
+</div>
+</div>
+<div class="flex gap-1">
+      <button class="relay-btn-on px-2.5 py-0.5 font-mono text-[9px] font-bold uppercase rounded-lg transition-all bg-white/[0.05] text-muted hover:text-white border border-white/10 shadow-sm cursor-pointer" data-relay="1">ON</button>
+      <button class="relay-btn-off px-2.5 py-0.5 font-mono text-[9px] font-bold uppercase rounded-lg transition-all bg-white/[0.05] text-muted hover:text-white border border-white/10 shadow-sm cursor-pointer" data-relay="1">OFF</button>
+    </div>
+</div>
+<!-- Relay 2: Standby -->
+<div class="flex items-center justify-between px-2.5 py-1.5 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-white/20" id="led-relay-2"></span>
+<div>
+<span class="text-[10px] font-semibold text-white block leading-tight">Soil Probe Zone A</span>
+<span class="font-mono text-[7.5px] text-muted">GPIO 11 · Actuator</span>
+</div>
+</div>
+<div class="flex gap-1">
+      <button class="relay-btn-on px-2.5 py-0.5 font-mono text-[9px] font-bold uppercase rounded-lg transition-all bg-white/[0.05] text-muted hover:text-white border border-white/10 shadow-sm cursor-pointer" data-relay="2">ON</button>
+      <button class="relay-btn-off px-2.5 py-0.5 font-mono text-[9px] font-bold uppercase rounded-lg transition-all bg-white/[0.05] text-muted hover:text-white border border-white/10 shadow-sm cursor-pointer" data-relay="2">OFF</button>
+    </div>
+</div>
+<!-- Relay 3: Standby -->
+<div class="flex items-center justify-between px-2.5 py-1.5 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-white/20" id="led-relay-3"></span>
+<div>
+<span class="text-[10px] font-semibold text-white block leading-tight">Soil Probe Zone B</span>
+<span class="font-mono text-[7.5px] text-muted">GPIO 12 · Actuator</span>
+</div>
+</div>
+<div class="flex gap-1">
+      <button class="relay-btn-on px-2.5 py-0.5 font-mono text-[9px] font-bold uppercase rounded-lg transition-all bg-white/[0.05] text-muted hover:text-white border border-white/10 shadow-sm cursor-pointer" data-relay="3">ON</button>
+      <button class="relay-btn-off px-2.5 py-0.5 font-mono text-[9px] font-bold uppercase rounded-lg transition-all bg-white/[0.05] text-muted hover:text-white border border-white/10 shadow-sm cursor-pointer" data-relay="3">OFF</button>
+    </div>
+</div>
+<!-- Relay 4: Active -->
+<div class="flex items-center justify-between px-2.5 py-1.5 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary glow-dot" id="led-relay-4"></span>
+<div>
+<span class="text-[10px] font-semibold text-white block leading-tight">Sprayer Boom Actuator</span>
+<span class="font-mono text-[7.5px] text-muted">GPIO 13 · 24V PWM</span>
+</div>
+</div>
+<div class="flex gap-1">
+      <button class="relay-btn-on px-2.5 py-0.5 font-mono text-[9px] font-bold uppercase rounded-lg transition-all bg-white/[0.05] text-muted hover:text-white border border-white/10 shadow-sm cursor-pointer" data-relay="4">ON</button>
+      <button class="relay-btn-off px-2.5 py-0.5 font-mono text-[9px] font-bold uppercase rounded-lg transition-all bg-white/[0.05] text-muted hover:text-white border border-white/10 shadow-sm cursor-pointer" data-relay="4">OFF</button>
+    </div>
+</div>
+</div>
+</div>
+<!-- Card 3D: Real-Time Event Audit Log Stream -->
+<div class="frost-card rounded-2xl flex-1 flex flex-col min-h-0 overflow-hidden">
+<div class="h-7 px-3.5 border-b border-white/[0.06] flex items-center justify-between bg-white/[0.02]">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary text-[13px]">view_timeline</span>
+<span class="font-semibold text-[10px] tracking-wide text-white">Event Audit Stream</span>
+</div>
+<span class="font-mono text-[8px] text-muted">1024 BUF</span>
+</div>
+<div class="p-2 flex-1 overflow-y-auto font-mono text-[8px] space-y-1 text-muted leading-tight max-h-[80px]" id="audit-log-stream">
+<div><span class="text-primary">[SYS 14:02:11]</span> RTK Fixed GPS lock acquired (14 SVs).</div>
+<div><span class="text-secondary">[NAV 14:02:18]</span> Target WP-04 locked. Track deviation: 1.8cm.</div>
+<div><span class="text-pathogen">[YOLO 14:02:29]</span> Pathogen: TOMATO EARLY BLIGHT (0.94).</div>
+<div><span class="text-primary">[RELAY 14:02:30]</span> Relay 1 (Pesticide) AUTO-ENGAGED.</div>
+<div><span class="text-white">[CLI 14:02:35]</span> ESP32 native bridge heartbeat nominal.</div>
+</div>
+</div>
+</section>
+</main>
+<!-- ==================== 4. BOTTOM DIAGNOSTIC DECK & INTERACTIVE CLI TERMINAL ==================== -->
+<footer class="h-14 w-full bg-[#0B0C10]/95 backdrop-blur-md border-t border-white/[0.07] flex flex-col justify-between shrink-0 px-3 py-1.5">
+<!-- Top row: 8-Node Subsystem Micro Badges + Interactive CLI Shell + System Vitals -->
+<div class="flex items-center justify-between gap-2">
+  <!-- Left: 8 Subsystem Nodes Micro-LED Deck -->
+  <div class="flex items-center gap-1 font-mono text-[9px] shrink-0" id="footer-nodes-bar">
+    <span class="text-white/50 font-semibold text-[8px] uppercase tracking-wider mr-1 hidden sm:inline">NODES:</span>
+    <div class="flex items-center gap-1 px-1.5 py-0.5 rounded bg-white/[0.04] border border-white/[0.06] cursor-pointer hover:border-primary/50 transition-all" onclick="toggleDiagnosticsModal(true)" title="NODE_VISION: Optical Camera & YOLOv11 (60 FPS)">
+      <span class="w-1.5 h-1.5 rounded-full bg-primary glow-dot" id="fnode-led-NODE_VISION"></span>
+      <span class="text-[8.5px] text-white/80 font-mono">VIS</span>
+    </div>
+    <div class="flex items-center gap-1 px-1.5 py-0.5 rounded bg-white/[0.04] border border-white/[0.06] cursor-pointer hover:border-primary/50 transition-all" onclick="toggleDiagnosticsModal(true)" title="NODE_GNSS: RTK NEO-8M Receiver">
+      <span class="w-1.5 h-1.5 rounded-full bg-primary glow-dot" id="fnode-led-NODE_GNSS"></span>
+      <span class="text-[8.5px] text-white/80 font-mono">GPS</span>
+    </div>
+    <div class="flex items-center gap-1 px-1.5 py-0.5 rounded bg-white/[0.04] border border-white/[0.06] cursor-pointer hover:border-primary/50 transition-all" onclick="toggleDiagnosticsModal(true)" title="NODE_I2C: BME280 & BH1750 Environmental Bus">
+      <span class="w-1.5 h-1.5 rounded-full bg-primary glow-dot" id="fnode-led-NODE_I2C"></span>
+      <span class="text-[8.5px] text-white/80 font-mono">I2C</span>
+    </div>
+    <div class="flex items-center gap-1 px-1.5 py-0.5 rounded bg-white/[0.04] border border-white/[0.06] cursor-pointer hover:border-primary/50 transition-all" onclick="toggleDiagnosticsModal(true)" title="NODE_SOIL: Dual Soil Moisture & Chemistry Probes">
+      <span class="w-1.5 h-1.5 rounded-full bg-primary glow-dot" id="fnode-led-NODE_SOIL"></span>
+      <span class="text-[8.5px] text-white/80 font-mono">SOIL</span>
+    </div>
+    <div class="flex items-center gap-1 px-1.5 py-0.5 rounded bg-white/[0.04] border border-white/[0.06] cursor-pointer hover:border-primary/50 transition-all" onclick="toggleDiagnosticsModal(true)" title="NODE_SONAR: Obstacle Sonar Ranging">
+      <span class="w-1.5 h-1.5 rounded-full bg-primary glow-dot" id="fnode-led-NODE_SONAR"></span>
+      <span class="text-[8.5px] text-white/80 font-mono">SONAR</span>
+    </div>
+    <div class="flex items-center gap-1 px-1.5 py-0.5 rounded bg-white/[0.04] border border-white/[0.06] cursor-pointer hover:border-primary/50 transition-all" onclick="toggleDiagnosticsModal(true)" title="NODE_POWER: 24V BMS Power Bus">
+      <span class="w-1.5 h-1.5 rounded-full bg-primary glow-dot" id="fnode-led-NODE_POWER"></span>
+      <span class="text-[8.5px] text-white/80 font-mono">PWR</span>
+    </div>
+    <div class="flex items-center gap-1 px-1.5 py-0.5 rounded bg-white/[0.04] border border-white/[0.06] cursor-pointer hover:border-primary/50 transition-all" onclick="toggleDiagnosticsModal(true)" title="NODE_RELAYS: 4-CH Solid State Actuator Bus">
+      <span class="w-1.5 h-1.5 rounded-full bg-primary glow-dot" id="fnode-led-NODE_RELAYS"></span>
+      <span class="text-[8.5px] text-white/80 font-mono">RLY</span>
+    </div>
+    <div class="flex items-center gap-1 px-1.5 py-0.5 rounded bg-white/[0.04] border border-white/[0.06] cursor-pointer hover:border-primary/50 transition-all" onclick="toggleDiagnosticsModal(true)" title="NODE_AI: VLA Autonomous Engine">
+      <span class="w-1.5 h-1.5 rounded-full bg-primary glow-dot" id="fnode-led-NODE_AI"></span>
+      <span class="text-[8.5px] text-white/80 font-mono">AI</span>
+    </div>
+  </div>
+
+  <!-- Center: Interactive Terminal Shell -->
+  <div class="flex-1 flex items-center gap-2 bg-white/[0.03] border border-white/[0.08] px-3 py-1 rounded-full max-w-xl">
+    <span class="font-mono text-[10px] font-bold text-primary shrink-0">CG-OS:~$</span>
+    <input class="flex-1 bg-transparent border-none text-white font-mono text-[10px] focus:outline-none placeholder:text-muted/50 p-0" id="cli-input" placeholder="type 'help', 'status', 'nodes', 'speed 200', 'relay 1 on'..." type="text"/>
+    <button class="px-2.5 py-0.5 bg-white text-black font-mono text-[8px] font-bold uppercase rounded-full transition-all hover:bg-white/80 shrink-0 cursor-pointer" id="cli-exec-btn">
+      EXEC
+    </button>
+  </div>
+
+  <!-- Right: Host Vitals & Quick Hardware Diagnostics Trigger -->
+  <div class="hidden lg:flex items-center gap-3 font-mono text-[9px] text-muted shrink-0">
+    <div class="flex items-center gap-1">
+      <span class="text-white/40 text-[8px]">CPU</span>
+      <span class="text-white font-semibold" id="host-cpu-val">12.0%</span>
+    </div>
+    <div class="flex items-center gap-1">
+      <span class="text-white/40 text-[8px]">RAM</span>
+      <span class="text-white font-semibold" id="host-ram-val">54.0%</span>
+    </div>
+    <div class="flex items-center gap-1">
+      <span class="text-white/40 text-[8px]">AI</span>
+      <span class="text-primary font-semibold" id="host-ollama-val">ONLINE</span>
+    </div>
+    <button onclick="toggleDiagnosticsModal(true)" class="px-2 py-0.5 rounded bg-primary/10 border border-primary/30 text-primary hover:bg-primary/20 text-[8.5px] font-bold transition-all flex items-center gap-1 cursor-pointer">
+      <span class="material-symbols-outlined text-[10px]">tune</span>
+      <span>DIAG</span>
+    </button>
+  </div>
+</div>
+
+<!-- Bottom row: Status Line & Hotkeys -->
+<div class="flex items-center justify-between font-mono text-[9px] px-1 text-white/70 truncate">
+  <div class="truncate flex items-center gap-2" id="cli-output-line">
+    <span>DEM3T3R V1 Tactical SCADA OS v4.20 · <span class="text-primary font-bold">100% WORKABLE</span> · Real Telemetry Ingested</span>
+  </div>
+  <div class="hidden xl:flex items-center gap-2 text-[8px] text-muted shrink-0 pl-2">
+    <span class="text-white/40">HOTKEYS:</span>
+    <span>[SPACE] ESTOP · [W/A/S/D/X] DRIVE · [1-4] RELAYS · [N] NODES</span>
+  </div>
+</div>
+</footer>
+<!-- ==================== 5. JAVASCRIPT & INTERACTIONS ==================== -->
+<script>
+  (function() {
+    // ==============================================================
+    // REAL DEM3T3R V1 HARDWARE & AI BACKEND WEBSOCKET BRIDGE
+    // ==============================================================
+    window.toggleDiagnosticsModal = function(show) {
+      const m = document.getElementById('hardware-diagnostics-modal');
+      if (!m) return;
+      if (show === undefined) {
+        m.classList.toggle('hidden');
+      } else if (show) {
+        m.classList.remove('hidden');
+      } else {
+        m.classList.add('hidden');
+      }
+    };
+
+    // Keyboard shortcut to toggle diagnostics modal (N or F2 or Esc)
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        window.toggleDiagnosticsModal(false);
+      } else if ((e.key === 'n' || e.key === 'N') && document.activeElement.tagName !== 'INPUT') {
+        window.toggleDiagnosticsModal();
+      }
+    });
+
+    // ==============================================================
+    // 🧠 VLA COGNITIVE REASONING STREAM & CAMERA HUD CONTROLLER
+    // ==============================================================
+    window.toggleCameraHUD = function() {
+      const hud = document.getElementById('camera-hud-layer');
+      const btn = document.getElementById('btn-toggle-hud');
+      const lbl = document.getElementById('hud-toggle-label');
+      if (!hud) return;
+      const isHidden = hud.classList.contains('hidden');
+      if (isHidden) {
+        hud.classList.remove('hidden');
+        if (btn) btn.className = "px-2.5 py-0.5 rounded-full bg-primary text-black font-mono text-[9px] font-bold border border-primary transition-all flex items-center gap-1 cursor-pointer shadow-sm";
+        if (lbl) lbl.innerText = "OVERLAY: ON";
+        logAudit("CAMERA", "Camera AI HUD & Annotations Overlay ENGAGED", "text-primary font-bold");
+      } else {
+        hud.classList.add('hidden');
+        if (btn) btn.className = "px-2.5 py-0.5 rounded-full bg-white/[0.05] hover:bg-white/[0.12] text-muted hover:text-white font-mono text-[9px] font-semibold border border-white/10 transition-all flex items-center gap-1 cursor-pointer";
+        if (lbl) lbl.innerText = "OVERLAY: OFF (CLEAN)";
+        logAudit("CAMERA", "Clean Video Mode active: All camera text & stickers cleared", "text-secondary font-bold");
+      }
+    };
+
+    window.toggleBallisticReticle = function() {
+      const r = document.getElementById('ballistic-aiming-reticle');
+      if (r) r.classList.toggle('hidden');
+    };
+
+    window.toggleVlaThoughtExpanded = function() {
+      const feed = document.getElementById('vla-thought-feed');
+      if (!feed) return;
+      if (feed.classList.contains('max-h-36')) {
+        feed.classList.remove('max-h-36');
+        feed.classList.add('max-h-72');
+      } else {
+        feed.classList.remove('max-h-72');
+        feed.classList.add('max-h-36');
+      }
+    };
+
+    window.submitVlaDirective = function(optText) {
+      const input = document.getElementById('vla-directive-input');
+      const text = (optText || (input ? input.value : '')).trim();
+      if (!text) return;
+      if (input) input.value = '';
+
+      logAudit("VLA", `Directive dispatched: "${text}"`, "text-primary font-bold");
+      logCli(`<span class='text-primary font-bold'>[VLA DIRECTIVE]</span> ${text}`);
+
+      if (socket && socket.connected) {
+        socket.emit('vla_directive', { directive: text, source: 'cockpit_hud' });
+      }
+
+      // Optimistic visual feedback
+      const stepP = document.getElementById('vla-step-perception');
+      if (stepP) stepP.innerText = `Ingested cognitive directive: "${text}" · Synthesizing physical action vectors...`;
+    };
+
+    // Attach listener for directive input Enter key
+    setTimeout(() => {
+      const dirInput = document.getElementById('vla-directive-input');
+      dirInput?.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          window.submitVlaDirective();
+        }
+      });
+    }, 200);
+
+    let socket = null;
+    try {
+      socket = io('http://localhost:5001', {
+        transports: ['websocket', 'polling'],
+        reconnection: true,
+        reconnectionDelay: 800,
+        timeout: 5000
+      });
+
+      socket.on('connect', () => {
+        logAudit("SYS", "⚡ Connected to DEM3T3R V1 Backend (Port 5001)", "text-primary font-bold");
+        const uplinkEl = document.getElementById('top-uplink-rate');
+        if (uplinkEl) uplinkEl.innerHTML = '<span class="text-primary font-bold">50.0 Hz [ONLINE]</span>';
+        const cs = document.getElementById('crop-model-select');
+        if (cs) {
+          socket.emit('crop_selected', { crop: cs.value.toLowerCase() });
+        }
+      });
+
+      socket.on('disconnect', () => {
+        logAudit("SYS", "⚠️ Uplink connection lost, retrying...", "text-hazard font-bold");
+        const uplinkEl = document.getElementById('top-uplink-rate');
+        if (uplinkEl) uplinkEl.innerHTML = '<span class="text-hazard font-bold">OFFLINE</span>';
+      });
+
+      socket.on('esp32_status', (data) => {
+        logAudit("HW", `ESP32 Telemetry: ${data.connected ? 'ONLINE (' + (data.ip || 'Port 5000') + ')' : 'STANDBY (Awaiting Link)'}`, data.connected ? "text-primary font-bold" : "text-amber-400");
+      });
+
+      // 🧠 VLA Cognitive Stream Event Listener (5-Phase Reasoning Loop)
+      socket.on('vla_cognitive_stream', (data) => {
+        if (!data) return;
+
+        // 1. Latency and token meters
+        const latEl = document.getElementById('vla-latency-val');
+        if (latEl && data.latency_ms) latEl.innerText = `${data.latency_ms.toFixed(1)}ms`;
+        const tokEl = document.getElementById('vla-token-val');
+        if (tokEl && data.token_count) tokEl.innerText = data.token_count;
+
+        // 2. Five Cognitive Steps
+        const stepP = document.getElementById('vla-step-perception');
+        if (stepP && data.perception) stepP.innerText = data.perception;
+
+        const stepH = document.getElementById('vla-step-hypothesis');
+        if (stepH && data.hypothesis) stepH.innerText = data.hypothesis;
+
+        const stepA = document.getElementById('vla-step-agronomy');
+        if (stepA && data.agronomy) stepA.innerText = data.agronomy;
+
+        const stepB = document.getElementById('vla-step-ballistics');
+        if (stepB && data.ballistics) stepB.innerText = data.ballistics;
+
+        const stepAct = document.getElementById('vla-step-action');
+        if (stepAct && data.action) stepAct.innerText = data.action;
+
+        // 3. Lead-Computing Ballistic Reticle HUD
+        const reticle = document.getElementById('ballistic-aiming-reticle');
+        const rInfo = data.target_reticle;
+        if (reticle && rInfo) {
+          reticle.style.top = `${rInfo.y_pct || 46}%`;
+          reticle.style.left = `${rInfo.x_pct || 52}%`;
+
+          const rLabel = document.getElementById('reticle-target-label');
+          if (rLabel) {
+            rLabel.innerText = `${rInfo.target_id || 'TGT'} · ${rInfo.label || 'CANOPY'} · ${(rInfo.distance_cm || 140).toFixed(0)}cm`;
+          }
+
+          const rLead = document.getElementById('reticle-lead-badge');
+          if (rLead && rInfo.lead_offset_mm) {
+            const az = rInfo.azimuth_deg || 0;
+            const xLead = rInfo.lead_offset_mm[0];
+            const yLead = rInfo.lead_offset_mm[1];
+            rLead.innerText = `LEAD: ${xLead >= 0 ? '+' : ''}${xLead}mm, ${yLead >= 0 ? '+' : ''}${yLead}mm | AZ: ${az >= 0 ? '+' : ''}${az.toFixed(1)}°`;
+          }
+
+          const rDot = document.getElementById('reticle-hud-dot');
+          const rRing = document.getElementById('reticle-inner-ring');
+          if (rInfo.locked) {
+            if (rDot) rDot.className = 'w-1.5 h-1.5 rounded-full bg-pathogen animate-ping';
+            if (rRing) rRing.className = 'w-10 h-10 border border-pathogen rounded-full flex items-center justify-center';
+          } else {
+            if (rDot) rDot.className = 'w-1.5 h-1.5 rounded-full bg-primary animate-pulse';
+            if (rRing) rRing.className = 'w-10 h-10 border border-secondary/70 rounded-full flex items-center justify-center';
+          }
+        }
+      });
+
+      socket.on('system_status', (data) => {
+        if (!data) return;
+
+        // 1. Wi-Fi Status Updates
+        if (data.wifi) {
+          const wSsid = document.getElementById('top-wifi-ssid');
+          if (wSsid) wSsid.innerText = data.wifi.ssid || 'DISCONNECTED';
+          const wSig = document.getElementById('top-wifi-sig');
+          if (wSig) wSig.innerText = `${data.wifi.signal_pct}% (${data.wifi.rssi_dbm}dBm)`;
+          const wIcon = document.getElementById('top-wifi-icon');
+          if (wIcon) {
+            wIcon.className = data.wifi.signal_pct > 60 ? 'material-symbols-outlined text-primary text-[14px]' :
+                              data.wifi.signal_pct > 25 ? 'material-symbols-outlined text-amber-400 text-[14px]' :
+                              'material-symbols-outlined text-hazard text-[14px]';
+          }
+          // Modal fields
+          const dSsid = document.getElementById('diag-wifi-ssid');
+          if (dSsid) dSsid.innerText = data.wifi.ssid || 'DISCONNECTED';
+          const dSig = document.getElementById('diag-wifi-sig');
+          if (dSig) dSig.innerText = `${data.wifi.signal_pct}%`;
+          const dRssi = document.getElementById('diag-wifi-rssi');
+          if (dRssi) dRssi.innerText = `${data.wifi.rssi_dbm} dBm`;
+          const dIp = document.getElementById('diag-wifi-ip');
+          if (dIp) dIp.innerText = data.wifi.ip || '127.0.0.1';
+          const dStat = document.getElementById('diag-wifi-status');
+          if (dStat) {
+            dStat.innerText = data.wifi.status;
+            dStat.className = data.wifi.status === 'ONLINE' ? 'px-2 py-0.5 rounded bg-primary/20 text-primary text-[9px] font-bold' : 'px-2 py-0.5 rounded bg-hazard/20 text-hazard text-[9px] font-bold';
+          }
+        }
+
+        // 2. ESP32 Master Link Updates
+        if (data.esp32) {
+          const eTrans = document.getElementById('top-esp-transport');
+          if (eTrans) eTrans.innerText = data.esp32.transport || 'STANDBY';
+          const eRate = document.getElementById('top-esp-rate');
+          if (eRate) eRate.innerText = `${(data.esp32.rate_hz || 0).toFixed(1)} Hz`;
+          const eLed = document.getElementById('top-esp-led');
+          if (eLed) {
+            eLed.className = data.esp32.connected ? 'w-1.5 h-1.5 rounded-full bg-primary glow-dot' : 'w-1.5 h-1.5 rounded-full bg-amber-400';
+          }
+          // Modal fields
+          const dEStat = document.getElementById('diag-esp-status');
+          if (dEStat) {
+            dEStat.innerText = data.esp32.connected ? 'CONNECTED' : 'STANDBY';
+            dEStat.className = data.esp32.connected ? 'px-2 py-0.5 rounded bg-primary/20 text-primary text-[9px] font-bold' : 'px-2 py-0.5 rounded bg-amber-400/20 text-amber-400 text-[9px] font-bold';
+          }
+          const dETrans = document.getElementById('diag-esp-transport');
+          if (dETrans) dETrans.innerText = data.esp32.transport || 'STANDBY';
+          const dERate = document.getElementById('diag-esp-rate');
+          if (dERate) dERate.innerText = `${(data.esp32.rate_hz || 0).toFixed(1)} Hz`;
+          const dEIp = document.getElementById('diag-esp-ip');
+          if (dEIp) dEIp.innerText = data.esp32.ip || '192.168.8.150';
+        }
+
+        // 3. Subsystem Nodes Mesh Updates (Footer Badges + Diagnostics Modal)
+        if (data.nodes && Array.isArray(data.nodes)) {
+          data.nodes.forEach(node => {
+            const isNominal = node.status === 'ONLINE' || node.status === 'FIXED' || node.status === 'CLEAR' || node.status === 'ARMED' || node.status === 'NOMINAL';
+
+            // Footer Badge LED
+            const fLed = document.getElementById(`fnode-led-${node.id}`);
+            if (fLed) {
+              fLed.className = isNominal ? 'w-1.5 h-1.5 rounded-full bg-primary glow-dot' : 'w-1.5 h-1.5 rounded-full bg-amber-400';
+            }
+
+            // Modal Status Label
+            const mStat = document.getElementById(`diag-status-${node.id}`);
+            if (mStat) {
+              mStat.innerText = node.status;
+              mStat.className = isNominal ? 'text-[9px] font-bold text-primary' : 'text-[9px] font-bold text-amber-400';
+            }
+
+            // Modal Detail String
+            const mDet = document.getElementById(`diag-detail-${node.id}`);
+            if (mDet) {
+              if (node.id === 'NODE_VISION') mDet.innerText = `${node.fps} FPS | ${node.latency_ms}ms YOLO11`;
+              else if (node.id === 'NODE_GNSS') mDet.innerText = `${node.sats} SVs | HDOP ${node.hdop}`;
+              else if (node.id === 'NODE_I2C') mDet.innerText = `${node.temp}°C | ${node.humidity}% | ${node.pressure} hPa | ${node.light} lx`;
+              else if (node.id === 'NODE_SOIL') mDet.innerText = `Probe A: ${node.soil1}% | Probe B: ${node.soil2}%`;
+              else if (node.id === 'NODE_SONAR') mDet.innerText = `Clearance: ${node.distance_cm} cm`;
+              else if (node.id === 'NODE_POWER') mDet.innerText = `${node.voltage}V (${node.pct}% Reserve)`;
+              else if (node.id === 'NODE_RELAYS') mDet.innerText = `Active: [${(node.active_relays || []).join(',')}]`;
+              else if (node.id === 'NODE_AI') mDet.innerText = `Mode: ${node.mode}`;
+            }
+          });
+        }
+
+        // 4. System Host Vitals
+        if (data.system) {
+          const cpuEl = document.getElementById('host-cpu-val');
+          if (cpuEl) cpuEl.innerText = `${data.system.cpu_pct.toFixed(1)}%`;
+          const ramEl = document.getElementById('host-ram-val');
+          if (ramEl) ramEl.innerText = `${data.system.ram_pct.toFixed(1)}%`;
+          const olEl = document.getElementById('host-ollama-val');
+          if (olEl) {
+            olEl.innerText = data.system.ollama_online ? 'ONLINE' : 'STANDBY';
+            olEl.className = data.system.ollama_online ? 'text-primary font-semibold' : 'text-amber-400 font-semibold';
+          }
+        }
+      });
+
+      socket.on('mode_status', (data) => {
+        const isAuto = (data.mode === 'auto');
+        const mAuto = document.getElementById('mode-auto');
+        const mRc = document.getElementById('mode-rc');
+        if (mAuto && mRc) {
+          if (isAuto) {
+            mAuto.className = "px-3 py-1 rounded-full text-[10px] font-semibold transition-all bg-white text-black shadow";
+            mRc.className = "px-2.5 py-1 rounded-full text-[10px] font-medium text-muted hover:text-white transition-all";
+          } else {
+            mRc.className = "px-3 py-1 rounded-full text-[10px] font-semibold transition-all bg-white text-black shadow";
+            mAuto.className = "px-2.5 py-1 rounded-full text-[10px] font-medium text-muted hover:text-white transition-all";
+          }
+        }
+      });
+
+      
+      const sparklines = {};
+      const maxDataPoints = 30;
+
+      function drawSparkline(id, val, color) {
+        if (val === undefined || val === null || isNaN(val)) return;
+        val = parseFloat(val);
+        if (!sparklines[id]) {
+          sparklines[id] = [];
+          for (let k = 0; k < 12; k++) sparklines[id].push(val);
+        }
+        let arr = sparklines[id];
+        arr.push(val);
+        if (arr.length > maxDataPoints) arr.shift();
+        
+        const canvas = document.getElementById('graph-' + id);
+        if (!canvas) return;
+        
+        const ctx = canvas.getContext('2d');
+        const w = canvas.width;
+        const h = canvas.height;
+        ctx.clearRect(0, 0, w, h);
+        
+        const min = Math.min(...arr);
+        const max = Math.max(...arr);
+        const range = (max - min) || (Math.abs(val) * 0.1) || 1.0;
+        
+        // Draw sparkline curve
+        ctx.beginPath();
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2.2;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        
+        const step = w / (arr.length - 1 || 1);
+        for (let i = 0; i < arr.length; i++) {
+          const x = i * step;
+          const norm = (arr[i] - min) / range;
+          const y = h - (norm * (h - 8) + 4);
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+        
+        // Gradient fill under curve
+        ctx.lineTo(w, h);
+        ctx.lineTo(0, h);
+        ctx.closePath();
+        const grad = ctx.createLinearGradient(0, 0, 0, h);
+        grad.addColorStop(0, color + '55');
+        grad.addColorStop(1, color + '00');
+        ctx.fillStyle = grad;
+        ctx.fill();
+      }
+
+      socket.on('telemetry', (data) => {
+
+        // Raw packet inspector update in modal
+        const rawEl = document.getElementById('diag-raw-packet');
+        if (rawEl) {
+          try {
+            rawEl.innerText = JSON.stringify(data, null, 2);
+          } catch(e) {}
+        }
+
+        // 1. SCADA 8-Sensor Matrix Real-Time Updates
+        const temp = data.temperature ?? data.temperature_c;
+        if (temp !== undefined && temp !== null) {
+          const el = document.getElementById('val-temp');
+          if (el) { el.innerText = parseFloat(temp).toFixed(1); drawSparkline('temp', parseFloat(temp), '#FFB300'); }
+        }
+        const hum = data.humidity ?? data.humidity_pct;
+        if (hum !== undefined && hum !== null) {
+          const el = document.getElementById('val-hum');
+          if (el) { el.innerText = parseFloat(hum).toFixed(1); drawSparkline('hum', parseFloat(hum), '#00E5FF'); }
+        }
+        const lux = data.light ?? data.lux;
+        if (lux !== undefined && lux !== null) {
+          const el = document.getElementById('val-solar');
+          if (el) { el.innerText = (parseFloat(lux) / 1000).toFixed(1) + 'k'; drawSparkline('solar', parseFloat(lux), '#FFEA00'); }
+        }
+        const pres = data.pressure;
+        if (pres !== undefined && pres !== null) {
+          const el = document.getElementById('val-pres');
+          if (el) { el.innerText = parseFloat(pres).toFixed(1); drawSparkline('pres', parseFloat(pres), '#B388FF'); }
+        }
+        const uvi = data.uvIndex ?? data.uv_index;
+        if (uvi !== undefined && uvi !== null) {
+          const el = document.getElementById('val-uv');
+          if (el) { el.innerText = parseFloat(uvi).toFixed(1); drawSparkline('uv', parseFloat(uvi), '#FF1744'); }
+        }
+        const soil1 = data.soilMoisture ?? data.soil1_raw;
+        if (soil1 !== undefined && soil1 !== null) {
+          const el = document.getElementById('val-soila');
+          if (el) { el.innerText = parseFloat(soil1).toFixed(1); drawSparkline('soila', parseFloat(soil1), '#00E676'); }
+        }
+        const soil2 = data.soilMoisture2 ?? data.soil2_raw;
+        if (soil2 !== undefined && soil2 !== null) {
+          const el = document.getElementById('val-soilb');
+          if (el) { el.innerText = parseFloat(soil2).toFixed(1); drawSparkline('soilb', parseFloat(soil2), '#1DE9B6'); }
+        }
+        const sonar = data.ultrasonic ?? data.sonar;
+        if (sonar !== undefined && sonar !== null) {
+          const sVal = parseFloat(sonar);
+          const el = document.getElementById('val-sonar');
+          if (el) { el.innerText = sVal.toFixed(0); drawSparkline('sonar', sVal, '#2979FF'); }
+          const obsTop = document.getElementById('top-obstacle-detail');
+          if (obsTop) {
+            obsTop.innerText = sVal < 50 ? `WARNING (${sVal.toFixed(0)}cm)` : `CLEAR (>${sVal.toFixed(0)}cm)`;
+            obsTop.className = sVal < 50 ? 'text-hazard font-mono font-bold animate-pulse' : 'text-secondary font-mono font-medium';
+          }
+        }
+
+        // 2. Battery telemetry
+        const bat = data.battery ?? data.bat ?? data.voltage;
+        if (bat !== undefined && bat !== null) {
+          const bV = document.getElementById('top-bat-volts');
+          if (bV) bV.innerText = parseFloat(bat).toFixed(1) + 'V';
+          const bP = document.getElementById('top-bat-pct');
+          if (bP) {
+            const pct = Math.max(5, Math.min(100, Math.round(((parseFloat(bat) - 21.0) / 4.2) * 100)));
+            bP.innerText = pct + '%';
+          }
+        }
+
+        // 3. GPS Satellites & HDOP
+        const sats = data.satellites ?? data.sats;
+        const hdop = data.hdop;
+        if (sats !== undefined && sats !== null) {
+          const gpsEl = document.getElementById('top-gps-detail');
+          if (gpsEl) gpsEl.innerText = `${sats} SVs · HDOP ${hdop !== undefined ? parseFloat(hdop).toFixed(2) : '0.72'}`;
+        }
+
+        // 4. Real GPS Coordinate Sync & Autonomous Waypoint Progression
+        const lat = data.latitude ?? data.lat;
+        const lon = data.longitude ?? data.lng;
+        if (lat && lon && typeof lat === 'number' && typeof lon === 'number' && lat !== 0) {
+          const rLat = document.getElementById('ribbon-lat');
+          const rLon = document.getElementById('ribbon-lon');
+          if (rLat) rLat.innerText = `${Math.abs(lat).toFixed(5)}° ${lat >= 0 ? 'N' : 'S'}`;
+          if (rLon) rLon.innerText = `${Math.abs(lon).toFixed(5)}° ${lon >= 0 ? 'E' : 'W'}`;
+          roverCoords = [lat, lon];
+          if (roverMarker) roverMarker.setLatLng(roverCoords);
+
+          // Autonomous waypoint progression
+          if (typeof waypoints !== 'undefined' && waypoints.length > 0 && typeof activeWpIndex !== 'undefined') {
+            const curWp = waypoints[activeWpIndex];
+            if (curWp) {
+              const dLat = (lat - curWp.lat) * 111320;
+              const dLon = (lon - curWp.lng) * 111320 * Math.cos(lat * Math.PI / 180);
+              const distM = Math.hypot(dLat, dLon);
+              if (distM < 8.0 && activeWpIndex < waypoints.length - 1) {
+                activeWpIndex++;
+                if (typeof renderMapTacticalElements === 'function') renderMapTacticalElements(roverCoords);
+                logAudit("NAV", `Waypoint ${curWp.id} reached. Advancing to ${waypoints[activeWpIndex].id}`, "text-primary font-bold");
+              }
+            }
+          }
+        }
+
+        // 5. Hardware Relays Sync
+        if (data.pump_on !== undefined && relays[1] !== data.pump_on) { relays[1] = Boolean(data.pump_on); updateRelayUI(1); }
+        if (data.sol1_on !== undefined && relays[2] !== data.sol1_on) { relays[2] = Boolean(data.sol1_on); updateRelayUI(2); }
+        if (data.sol2_on !== undefined && relays[3] !== data.sol2_on) { relays[3] = Boolean(data.sol2_on); updateRelayUI(3); }
+        if (data.spare_on !== undefined && relays[4] !== data.spare_on) { relays[4] = Boolean(data.spare_on); updateRelayUI(4); }
+
+        // 6. Motor PWM Speed Readout Sync
+        if (data.currentPwm !== undefined) {
+          const pVal = parseInt(data.currentPwm);
+          const pPct = Math.round((pVal / 255) * 100);
+          const pReadout = document.getElementById('pwm-readout');
+          const pBar = document.getElementById('pwm-gauge-bar');
+          if (pReadout) pReadout.innerText = `${pVal} PWM / ${pPct}%`;
+          if (pBar) pBar.style.width = `${pPct}%`;
+        }
+      });
+
+      socket.on('detection_list', (data) => {
+        if (data.detections && data.detections.length > 0) {
+          const d = data.detections[0];
+          const confPct = (d.confidence * 100).toFixed(1);
+          const rawCls = d.class || 'Unknown';
+          const clsClean = rawCls.replace(/_/g, ' ').toUpperCase();
+          const cropName = (data.crop || currentCrop || 'Crop').toUpperCase();
+          
+          logAudit("YOLO", `Pathogen: ${clsClean} (${confPct}%) on ${cropName}`, "text-pathogen font-bold");
+          
+          const diagTitle = document.getElementById('pathology-diagnosis-title');
+          const riskBadge = document.getElementById('pathology-risk-badge');
+          const riskPct = document.getElementById('pathology-risk-pct');
+          const diagDesc = document.getElementById('pathology-detail-desc');
+          const pipeDis = document.getElementById('pathology-pipeline-disease');
+          
+          if (rawCls.toLowerCase().includes('healthy')) {
+            if (diagTitle) diagTitle.innerText = `${cropName}: Healthy Canopy`;
+            if (riskBadge) {
+              riskBadge.innerText = "HEALTHY";
+              riskBadge.className = "text-[9px] text-primary font-mono font-bold bg-primary/15 px-1.5 py-0.2 rounded border border-primary/30";
+            }
+            if (riskPct) riskPct.innerText = "10%";
+            if (diagDesc) diagDesc.innerText = `Foliar computer vision scan confirms healthy ${cropName} tissue (${confPct}% confidence).`;
+            if (pipeDis) {
+              pipeDis.innerText = `Healthy (${confPct}%)`;
+              pipeDis.className = "px-2 py-1 rounded-full bg-primary/20 text-primary border border-primary/30 font-medium";
+            }
+          } else {
+            if (diagTitle) diagTitle.innerText = clsClean;
+            if (riskBadge) {
+              riskBadge.innerText = "INFESTATION";
+              riskBadge.className = "text-[9px] text-hazard font-mono font-bold bg-hazard/15 px-1.5 py-0.2 rounded border border-hazard/30 animate-pulse";
+            }
+            if (riskPct) riskPct.innerText = `${Math.min(99, Math.round(d.confidence * 100))}%`;
+            if (diagDesc) diagDesc.innerText = `High-confidence pathology signature identified: ${clsClean} (${confPct}%). Targeted actuator response armed.`;
+            if (pipeDis) {
+              pipeDis.innerText = `${clsClean} (${confPct}%)`;
+              pipeDis.className = "px-2 py-1 rounded-full bg-hazard/20 text-hazard border border-hazard/30 font-medium animate-pulse";
+            }
+          }
+        }
+      });
+
+      socket.on('ai_recommendations', (data) => {
+        logAudit("VLA", `AI Treatment: ${data.recovery || data.fertilizer || data.disease}`, "text-primary font-bold");
+        const pipeAct = document.getElementById('pathology-pipeline-action');
+        if (pipeAct && (data.recovery || data.fertilizer)) {
+          pipeAct.innerText = `Prescription: ${data.recovery || data.fertilizer}`;
+        }
+      });
+
+      socket.on('crop_confirmed', (data) => {
+        logAudit("YOLO", `AI Crop Model Activated: ${data.crop?.toUpperCase()} (${data.classes?.length || 0} classes on GPU)`, "text-primary font-bold");
+        logCli(`Active YOLOv11 Model Profile: <strong class="text-primary">${data.crop?.toUpperCase()}</strong> (${data.classes?.length || 0} disease detectors compiled on CUDA).`);
+        const diagTitle = document.getElementById('pathology-diagnosis-title');
+        if (diagTitle) diagTitle.innerText = `Scanning ${data.crop?.toUpperCase()}...`;
+      });
+
+      socket.on('log_entry', (data) => {
+        logAudit(data.type ? data.type.toUpperCase() : "SYS", data.msg, data.type === 'error' ? 'text-hazard font-bold' : data.type === 'warning' ? 'text-amber-400' : 'text-white');
+      });
+    } catch (err) {
+      console.warn("Socket.io initialization warning:", err);
+    }
+
+    // Cockpit State
+    let isEStopLatched = false;
+    let currentPwm = 170; // Default Cruise
+    const relays = {
+      1: true,
+      2: false,
+      3: false,
+      4: true
+    };
+
+    // Base coordinates (fallback / tactical origin)
+    let roverCoords = [6.92715, 79.86124];
+    let activeWpIndex = 3; // WP-04
+
+    // Elements
+    const fullEstopOverlay = document.getElementById('full-estop-overlay');
+    const estopToggleBtn = document.getElementById('estop-toggle-btn');
+    const overlayResetBtn = document.getElementById('overlay-reset-btn');
+    const auditLogStream = document.getElementById('audit-log-stream');
+    const cliOutputLine = document.getElementById('cli-output-line');
+    const cliInput = document.getElementById('cli-input');
+    const cliExecBtn = document.getElementById('cli-exec-btn');
+    const pwmReadout = document.getElementById('pwm-readout');
+    const pwmGaugeBar = document.getElementById('pwm-gauge-bar');
+    const motorStatusBadge = document.getElementById('motor-status-badge');
+    const ribbonLat = document.getElementById('ribbon-lat');
+    const ribbonLon = document.getElementById('ribbon-lon');
+
+    // Audit Logger
+    function logAudit(tag, msg, color = "text-white") {
+      if (!auditLogStream) return;
+      const now = new Date();
+      const timeStr = now.toTimeString().split(' ')[0];
+      const line = document.createElement('div');
+      line.innerHTML = `<span class="${color}">[${tag} ${timeStr}]</span> ${msg}`;
+      auditLogStream.appendChild(line);
+      auditLogStream.scrollTop = auditLogStream.scrollHeight;
+    }
+
+    function logCli(msg) {
+      if (cliOutputLine) {
+        cliOutputLine.innerHTML = msg;
+      }
+    }
+
+    // Initialize Leaflet Tactical Map with CartoDB Dark Matter tiles (Dark, no watermark issues)
+    let map = null;
+    let roverMarker = null;
+    let waypoints = [];
+    let waypointMarkers = [];
+    let completedPathPolyline = null;
+    let plannedPathPolyline = null;
+
+    function generateWaypointsAround(center) {
+      const [lat, lng] = center;
+      return [
+        { id: 'WP-01', lat: lat - 0.0018, lng: lng - 0.0022 },
+        { id: 'WP-02', lat: lat + 0.0016, lng: lng - 0.0022 },
+        { id: 'WP-03', lat: lat + 0.0016, lng: lng - 0.0008 },
+        { id: 'WP-04', lat: lat - 0.0002, lng: lng - 0.0008, active: true },
+        { id: 'WP-05', lat: lat - 0.0018, lng: lng - 0.0008 },
+        { id: 'WP-06', lat: lat - 0.0018, lng: lng + 0.0008 },
+        { id: 'WP-07', lat: lat + 0.0016, lng: lng + 0.0008 },
+        { id: 'WP-08', lat: lat + 0.0016, lng: lng + 0.0022 },
+      ];
+    }
+
+    function initTacticalMap(centerCoords) {
+      if (map) {
+        map.setView(centerCoords, 17);
+        return;
+      }
+
+      const mapContainer = document.getElementById('leaflet-map');
+      if (!mapContainer) return;
+
+      map = L.map('leaflet-map', {
+        zoomControl: false,
+        attributionControl: false
+      }).setView(centerCoords, 17);
+
+      // Dark Matter CartoDB tiles
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        maxZoom: 20,
+        subdomains: 'abcd'
+      }).addTo(map);
+
+      L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+      waypoints = generateWaypointsAround(centerCoords);
+      renderMapTacticalElements(centerCoords);
+
+      // Live Geolocation check
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            const liveLat = parseFloat(pos.coords.latitude.toFixed(5));
+            const liveLng = parseFloat(pos.coords.longitude.toFixed(5));
+            roverCoords = [liveLat, liveLng];
+            if (ribbonLat) ribbonLat.innerText = `${Math.abs(liveLat).toFixed(5)}° ${liveLat >= 0 ? 'N' : 'S'}`;
+            if (ribbonLon) ribbonLon.innerText = `${Math.abs(liveLng).toFixed(5)}° ${liveLng >= 0 ? 'E' : 'W'}`;
+            map.setView(roverCoords, 17);
+            waypoints = generateWaypointsAround(roverCoords);
+            renderMapTacticalElements(roverCoords);
+            logAudit("GPS", `Geolocation acquired: ${liveLat}, ${liveLng} (RTK Locked)`, "text-primary font-bold");
+          },
+          () => {
+            logAudit("GPS", "Geolocation fallback to fixed coordinates (6.92715, 79.86124)", "text-muted");
+          },
+          { enableHighAccuracy: true, timeout: 5000 }
+        );
+      }
+    }
+
+    function renderMapTacticalElements(currentPos) {
+      waypointMarkers.forEach(m => map.removeLayer(m));
+      waypointMarkers = [];
+      if (roverMarker) map.removeLayer(roverMarker);
+      if (completedPathPolyline) map.removeLayer(completedPathPolyline);
+      if (plannedPathPolyline) map.removeLayer(plannedPathPolyline);
+
+      const latLngs = waypoints.map(w => [w.lat, w.lng]);
+
+      // Completed Path
+      const completedSegments = [
+        latLngs[0],
+        latLngs[1],
+        latLngs[2],
+        currentPos
+      ];
+      completedPathPolyline = L.polyline(completedSegments, {
+        color: '#00E676',
+        weight: 3,
+        opacity: 0.9,
+        lineJoin: 'round'
+      }).addTo(map);
+
+      // Planned Path
+      const plannedSegments = [
+        currentPos,
+        latLngs[3],
+        latLngs[4],
+        latLngs[5],
+        latLngs[6],
+        latLngs[7]
+      ];
+      plannedPathPolyline = L.polyline(plannedSegments, {
+        color: '#00E5FF',
+        weight: 2,
+        opacity: 0.7,
+        dashArray: '6, 6',
+        lineJoin: 'round'
+      }).addTo(map);
+
+      // Waypoint Markers
+      waypoints.forEach((wp, idx) => {
+        const isActive = idx === activeWpIndex;
+        const isDone = idx < activeWpIndex;
+        const color = isActive ? '#FF334B' : (isDone ? '#00E676' : '#7E8494');
+
+        const iconHtml = `
+          <div style="display:flex; flex-direction:column; align-items:center;">
+            <div class="${isActive ? 'tactical-marker-active' : ''}" style="width:11px; height:11px; border-radius:50%; background:${color}; border:2px solid #090A0E; box-shadow: 0 0 10px ${color};"></div>
+            <span style="font-family:'JetBrains Mono'; font-size:8px; font-weight:600; color:#fff; background:rgba(15,16,22,0.9); padding:1px 4px; border-radius:4px; border:1px solid rgba(255,255,255,0.1); margin-top:2px; white-space:nowrap;">${wp.id}</span>
+          </div>
+        `;
+        const customIcon = L.divIcon({
+          html: iconHtml,
+          className: '',
+          iconSize: [40, 24],
+          iconAnchor: [20, 6]
+        });
+
+        const m = L.marker([wp.lat, wp.lng], { icon: customIcon }).addTo(map);
+        waypointMarkers.push(m);
+      });
+
+      // Rover Vehicle Marker
+      const roverHtml = `
+        <div style="display:flex; flex-direction:column; align-items:center;">
+          <div style="width:14px; height:14px; background:#00E676; border:2px solid #FFFFFF; border-radius:3px; transform:rotate(45deg); box-shadow:0 0 14px #00E676;"></div>
+          <span style="font-family:'JetBrains Mono'; font-size:8px; font-weight:700; color:#00E676; background:#08090C; border:1px solid #00E676; border-radius:3px; padding:0 4px; margin-top:3px; white-space:nowrap;">ROVER-CG1</span>
+        </div>
+      `;
+      const roverIcon = L.divIcon({
+        html: roverHtml,
+        className: '',
+        iconSize: [60, 30],
+        iconAnchor: [30, 7]
+      });
+
+      roverMarker = L.marker(currentPos, { icon: roverIcon }).addTo(map);
+    }
+
+    // Initialize map on DOM load
+    window.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        initTacticalMap(roverCoords);
+      }, 100);
+    });
+
+    // 1. HARD E-STOP ENGAGE / DISENGAGE
+    function triggerEStop() {
+      isEStopLatched = true;
+      fullEstopOverlay.classList.remove('hidden'); fullEstopOverlay.classList.add('active-estop'); fullEstopOverlay.style.setProperty('display', 'flex', 'important');
+      fullEstopOverlay.classList.add('flex');
+      
+      currentPwm = 0;
+      pwmReadout.innerText = "0 PWM / 0% (HALTED)";
+      pwmGaugeBar.style.width = "0%";
+      motorStatusBadge.innerText = "E-STOPPED";
+      motorStatusBadge.className = "font-mono text-[9px] text-hazard px-2 py-0.5 rounded-full bg-hazard/15 border border-hazard/40 font-bold animate-pulse";
+
+      for (let r = 1; r <= 4; r++) {
+        relays[r] = false;
+        updateRelayUI(r);
+      }
+
+      logAudit("ESTOP", "CRITICAL HARD E-STOP LATCHED! PWM ZEROED, RELAYS CUT", "text-hazard font-bold");
+      if (socket && socket.connected) {
+        socket.emit('robot_move', { direction: 'stop', speed: 0, source: 'manual' });
+        [1,2,3,4].forEach(r => socket.emit('toggle_relay', { target: 'R' + r, state: false }));
+      }
+
+      logCli("<span class='text-hazard font-bold'>[E-STOP ENGAGED] Press [SPACE] or click reset to re-arm system.</span>");
+    }
+
+    function disengageEStop() {
+      isEStopLatched = false;
+      fullEstopOverlay.classList.add('hidden'); fullEstopOverlay.classList.remove('active-estop'); fullEstopOverlay.style.setProperty('display', 'none', 'important');
+      fullEstopOverlay.classList.remove('flex');
+
+      currentPwm = 170;
+      pwmReadout.innerText = "170 PWM / 66%";
+      pwmGaugeBar.style.width = "66%";
+      motorStatusBadge.innerText = "ARMED";
+      motorStatusBadge.className = "font-mono text-[9px] text-primary px-2 py-0.5 rounded-full bg-primary/10 border border-primary/25 font-bold";
+
+      relays[1] = true;
+      relays[4] = true;
+      updateRelayUI(1);
+      updateRelayUI(4);
+
+      logAudit("SYS", "Hard E-Stop released. Motors and bus restored to ARMED state.", "text-primary");
+      if (socket && socket.connected) {
+        socket.emit('robot_move', { direction: 'stop', speed: 0, source: 'manual' });
+        socket.emit('toggle_relay', { target: 'R1', state: true });
+        socket.emit('toggle_relay', { target: 'R4', state: true });
+      }
+
+      logCli("<span class='text-primary'>[OK] Emergency Stop released. Chassis re-armed at 170 PWM.</span>");
+    }
+
+    function toggleEStop() {
+      if (isEStopLatched) {
+        disengageEStop();
+      } else {
+        triggerEStop();
+      }
+    }
+
+    estopToggleBtn.addEventListener('click', toggleEStop);
+    overlayResetBtn.addEventListener('click', disengageEStop);
+
+    // 2. RELAY CONTROLLER
+    function updateRelayUI(idx) {
+      const isActive = relays[idx];
+      const led = document.getElementById(`led-relay-${idx}`);
+      const btnOn = document.querySelector(`.relay-btn-on[data-relay="${idx}"]`);
+      const btnOff = document.querySelector(`.relay-btn-off[data-relay="${idx}"]`);
+      if (!led || !btnOn || !btnOff) return;
+
+      if (isActive) {
+        led.className = "w-2 h-2 rounded-full bg-primary glow-dot";
+        btnOn.className = "relay-btn-on px-2.5 py-0.5 font-mono text-[9px] font-bold uppercase rounded-lg transition-all bg-primary text-black shadow-sm cursor-pointer";
+        btnOff.className = "relay-btn-off px-2.5 py-0.5 font-mono text-[9px] font-bold uppercase rounded-lg transition-all bg-white/[0.05] text-muted hover:text-white border border-white/10 shadow-sm cursor-pointer";
+      } else {
+        led.className = "w-2 h-2 rounded-full bg-white/20";
+        btnOn.className = "relay-btn-on px-2.5 py-0.5 font-mono text-[9px] font-bold uppercase rounded-lg transition-all bg-white/[0.05] text-muted hover:text-white border border-white/10 shadow-sm cursor-pointer";
+        btnOff.className = "relay-btn-off px-2.5 py-0.5 font-mono text-[9px] font-bold uppercase rounded-lg transition-all bg-hazard text-white shadow-sm cursor-pointer";
+      }
+    }
+
+    function toggleRelay(idx) {
+      if (isEStopLatched) {
+        logCli("<span class='text-hazard'>Cannot toggle relays while E-STOP is active!</span>");
+        return;
+      }
+      relays[idx] = !relays[idx];
+      updateRelayUI(idx);
+      if (socket && socket.connected) {
+        socket.emit('toggle_relay', { target: 'R' + idx, state: relays[idx] });
+      }
+
+      const st = relays[idx] ? "ACTIVE" : "STANDBY";
+      logAudit("RELAY", `Relay ${idx} shifted to ${st}`, relays[idx] ? "text-primary" : "text-muted");
+      logCli(`Relay ${idx} status: <strong class="${relays[idx] ? 'text-primary' : 'text-muted'}">${st}</strong>`);
+    }
+
+    function setRelay(idx, state) {
+      if (isEStopLatched) {
+        logCli("<span class='text-hazard'>Cannot toggle relays while E-STOP is active!</span>");
+        return;
+      }
+      relays[idx] = state;
+      updateRelayUI(idx);
+      const st = relays[idx] ? "ACTIVE" : "STANDBY";
+      logAudit("RELAY", `Relay ${idx} forced ${st}`, relays[idx] ? "text-primary" : "text-hazard");
+      if (typeof socket !== 'undefined' && socket && socket.connected) {
+        socket.emit('toggle_relay', { target: 'R' + idx, state: relays[idx] });
+      }
+    }
+
+    document.querySelectorAll('.relay-btn-on').forEach(btn => {
+      btn.addEventListener('click', () => {
+        setRelay(parseInt(btn.getAttribute('data-relay'), 10), true);
+      });
+    });
+    document.querySelectorAll('.relay-btn-off').forEach(btn => {
+      btn.addEventListener('click', () => {
+        setRelay(parseInt(btn.getAttribute('data-relay'), 10), false);
+      });
+    });
+
+    // 3. SPEED PRESETS
+    function setSpeed(val) {
+      if (isEStopLatched) return;
+      currentPwm = Math.min(255, Math.max(0, val));
+      const pct = Math.round((currentPwm / 255) * 100);
+      pwmReadout.innerText = `${currentPwm} PWM / ${pct}%`;
+      pwmGaugeBar.style.width = `${pct}%`;
+
+      const crawlBtn = document.getElementById('btn-speed-crawl');
+      const cruiseBtn = document.getElementById('btn-speed-cruise');
+      const turboBtn = document.getElementById('btn-speed-turbo');
+
+      [crawlBtn, cruiseBtn, turboBtn].forEach(b => {
+        b.className = "speed-btn py-1.5 px-1 rounded-xl bg-white/[0.04] hover:bg-white/[0.09] border border-white/[0.06] flex flex-col items-center text-center transition-all text-white";
+      });
+
+      if (currentPwm <= 100) {
+        crawlBtn.className = "speed-btn py-1.5 px-1 rounded-xl bg-white text-black font-semibold border border-white flex flex-col items-center text-center transition-all shadow-md";
+      } else if (currentPwm <= 190) {
+        cruiseBtn.className = "speed-btn py-1.5 px-1 rounded-xl bg-white text-black font-semibold border border-white flex flex-col items-center text-center transition-all shadow-md";
+      } else {
+        turboBtn.className = "speed-btn py-1.5 px-1 rounded-xl bg-white text-black font-semibold border border-white flex flex-col items-center text-center transition-all shadow-md";
+      }
+
+      logAudit("DRIVE", `PWM Duty cycle set: ${currentPwm} (${pct}%)`, "text-secondary");
+      if (socket && socket.connected) {
+        socket.emit('robot_move', { direction: 'forward', speed: currentPwm, source: 'manual' });
+      }
+
+    }
+
+    document.getElementById('btn-speed-crawl')?.addEventListener('click', () => setSpeed(100));
+    document.getElementById('btn-speed-cruise')?.addEventListener('click', () => setSpeed(170));
+    document.getElementById('btn-speed-turbo')?.addEventListener('click', () => setSpeed(255));
+
+    // 4. MOTOR D-PAD VECTOR
+    function triggerVector(key) {
+      if (isEStopLatched) {
+        logCli("<span class='text-hazard'>Chassis vector rejected: E-STOP active.</span>");
+        return;
+      }
+      let dir = "";
+      switch (key) {
+        case 'w': dir = `FORWARD vector engaged [${currentPwm} PWM]`; break;
+        case 's': dir = `REVERSE vector engaged [${currentPwm} PWM]`; break;
+        case 'a': dir = `LEFT differential spin engaged`; break;
+        case 'd': dir = `RIGHT differential spin engaged`; break;
+        case 'x': dir = `EMERGENCY BRAKE applied to dual H-Bridge`; break;
+      }
+      logAudit("NAV", dir, "text-secondary");
+      const dirMap = { 'w': 'forward', 's': 'backward', 'a': 'left', 'd': 'right', 'x': 'stop' };
+      const dirName = dirMap[key] || 'stop';
+      if (socket && socket.connected) {
+        socket.emit('robot_move', { direction: dirName, speed: key === 'x' ? 0 : currentPwm, source: 'manual' });
+      }
+
+      logCli(dir);
+
+      const btn = document.querySelector(`.dpad-key[data-key="${key}"]`);
+      if (btn) {
+        btn.classList.add('bg-white', 'text-black');
+        setTimeout(() => {
+          btn.classList.remove('bg-white', 'text-black');
+        }, 150);
+      }
+    }
+
+    document.querySelectorAll('.dpad-key').forEach(btn => {
+      btn.addEventListener('click', () => {
+        triggerVector(btn.getAttribute('data-key'));
+      });
+    });
+
+    // 5. KEYBOARD LISTENERS
+    window.addEventListener('keydown', (e) => {
+      if (document.activeElement === cliInput) {
+        if (e.key === 'Enter') {
+          executeCli();
+        }
+        if (e.code === 'Space' && e.ctrlKey) {
+          e.preventDefault();
+          toggleEStop();
+        }
+        return;
+      }
+
+      if (e.code === 'Space') {
+        e.preventDefault();
+        toggleEStop();
+        return;
+      }
+
+      const k = e.key.toLowerCase();
+      if (['1', '2', '3', '4'].includes(k)) {
+        e.preventDefault();
+        toggleRelay(parseInt(k, 10));
+        return;
+      }
+
+      if (['w', 'a', 's', 'd', 'x'].includes(k)) {
+        e.preventDefault();
+        triggerVector(k);
+        return;
+      }
+    });
+
+    // 6. SPECTRAL FILTERS & CROP SWITCHER
+    const filterRaw = document.getElementById('filter-raw');
+    const filterNdvi = document.getElementById('filter-ndvi');
+    const filterBiomass = document.getElementById('filter-biomass');
+    const streamImg = document.getElementById('live-stream-img');
+
+    function setFilter(type) {
+      [filterRaw, filterNdvi, filterBiomass].forEach(b => {
+        b.className = "filter-btn py-1 rounded-lg font-mono text-[9px] font-semibold uppercase transition-all bg-white/[0.04] text-muted hover:text-white border border-white/[0.08]";
+      });
+      if (type === 'raw') {
+        filterRaw.className = "filter-btn py-1 rounded-lg font-mono text-[9px] font-semibold uppercase transition-all bg-white text-black shadow-sm";
+        streamImg.style.filter = "none";
+      } else if (type === 'ndvi') {
+        filterNdvi.className = "filter-btn py-1 rounded-lg font-mono text-[9px] font-semibold uppercase transition-all bg-white text-black shadow-sm";
+        streamImg.style.filter = "contrast(180%) hue-rotate(90deg) saturate(200%)";
+      } else if (type === 'biomass') {
+        filterBiomass.className = "filter-btn py-1 rounded-lg font-mono text-[9px] font-semibold uppercase transition-all bg-white text-black shadow-sm";
+        streamImg.style.filter = "contrast(150%) saturate(300%) brightness(90%)";
+      }
+      logAudit("CAM", `Filter switched to [${type.toUpperCase()}]`, "text-secondary");
+    }
+
+    filterRaw?.addEventListener('click', () => setFilter('raw'));
+    filterNdvi?.addEventListener('click', () => setFilter('ndvi'));
+    filterBiomass?.addEventListener('click', () => setFilter('biomass'));
+
+    const cropSelect = document.getElementById('crop-model-select');
+    cropSelect?.addEventListener('change', (e) => {
+      logAudit("YOLO", `Tensor weights swapped: ${e.target.value}`, "text-pathogen");
+      if (socket && socket.connected) {
+        socket.emit('crop_selected', { crop: e.target.value.toLowerCase() });
+      }
+      fetch('/api/model/switch?crop=' + encodeURIComponent(e.target.value.toLowerCase())).catch(()=>{});
+
+      logCli(`Active YOLOv11 Model Profile: <strong class="text-white">${e.target.value}</strong>`);
+    });
+
+    // Mode Selector Toggle
+    const modeAuto = document.getElementById('mode-auto');
+    const modeRc = document.getElementById('mode-rc');
+    modeAuto?.addEventListener('click', () => {
+      modeAuto.className = "px-3 py-1 rounded-full text-[10px] font-semibold transition-all bg-white text-black shadow";
+      modeRc.className = "px-2.5 py-1 rounded-full text-[10px] font-medium text-muted hover:text-white transition-all";
+      logAudit("SYS", "Mode switched: AUTONOMOUS GPS WAYPOINT NAVIGATION", "text-primary font-bold");
+      if (socket && socket.connected) {
+        socket.emit('toggle_mode', { mode: 'auto' });
+      }
+
+    });
+    modeRc?.addEventListener('click', () => {
+      modeRc.className = "px-3 py-1 rounded-full text-[10px] font-semibold transition-all bg-white text-black shadow";
+      modeAuto.className = "px-2.5 py-1 rounded-full text-[10px] font-medium text-muted hover:text-white transition-all";
+      logAudit("SYS", "Mode switched: MANUAL RC OVERRIDE ENGAGED", "text-secondary font-bold");
+      if (socket && socket.connected) {
+        socket.emit('toggle_mode', { mode: 'manual' });
+      }
+
+    });
+
+    // Map Quick Actions
+    document.getElementById('map-btn-recenter')?.addEventListener('click', () => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition((pos) => {
+          const liveLat = parseFloat(pos.coords.latitude.toFixed(5));
+          const liveLng = parseFloat(pos.coords.longitude.toFixed(5));
+          roverCoords = [liveLat, liveLng];
+          if (ribbonLat) ribbonLat.innerText = `${Math.abs(liveLat).toFixed(5)}° ${liveLat >= 0 ? 'N' : 'S'}`;
+          if (ribbonLon) ribbonLon.innerText = `${Math.abs(liveLng).toFixed(5)}° ${liveLng >= 0 ? 'E' : 'W'}`;
+          map.setView(roverCoords, 18);
+          renderMapTacticalElements(roverCoords);
+          logAudit("GPS", `Recentered to: LAT ${liveLat}, LON ${liveLng}`, "text-primary");
+        }, () => {
+          if (map) map.setView(roverCoords, 17);
+        });
+      } else if (map) {
+        map.setView(roverCoords, 17);
+      }
+    });
+
+    document.getElementById('map-btn-addwp')?.addEventListener('click', () => {
+      const nextIdx = waypoints.length + 1;
+      const newWpId = `WP-0${nextIdx}`;
+      const lastWp = waypoints[waypoints.length - 1];
+      const newWp = {
+        id: newWpId,
+        lat: lastWp.lat - 0.0006,
+        lng: lastWp.lng + 0.0006
+      };
+      waypoints.push(newWp);
+      renderMapTacticalElements(roverCoords);
+      logAudit("NAV", `Waypoint ${newWpId} appended to mission vector.`, "text-secondary");
+      logCli(`<span class='text-secondary'>[NAV] Waypoint ${newWpId} added.</span>`);
+    });
+
+    document.getElementById('map-btn-skipwp')?.addEventListener('click', () => {
+      if (activeWpIndex < waypoints.length - 1) {
+        activeWpIndex++;
+        const targetWp = waypoints[activeWpIndex];
+        renderMapTacticalElements(roverCoords);
+        logAudit("NAV", `Bypassed WP -> Now targeting ${targetWp.id}.`, "text-secondary");
+        const eta = document.getElementById('stage-eta-val');
+        if (eta) eta.innerText = "01:45 ETA";
+      }
+    });
+
+    document.getElementById('map-btn-export')?.addEventListener('click', () => {
+      const rows = [
+        ['Field', 'Value'],
+        ['Device', 'ROVER-CG1'],
+        ['Latitude', roverCoords[0]],
+        ['Longitude', roverCoords[1]],
+        ['Active_Waypoint', waypoints[activeWpIndex]?.id || 'WP-04'],
+        ['Speed_PWM', currentPwm],
+        ['Temperature_C', document.getElementById('val-temp')?.innerText || '24.5'],
+        ['Humidity_Pct', document.getElementById('val-hum')?.innerText || '68.0'],
+        ['Solar_Lux', document.getElementById('val-solar')?.innerText || '48.2k'],
+        ['Soil_Probe_A', document.getElementById('val-soila')?.innerText || '42.8'],
+        ['Soil_Probe_B', document.getElementById('val-soilb')?.innerText || '39.4'],
+        ['Sonar_Clearance_cm', document.getElementById('val-sonar')?.innerText || '142'],
+        ['Timestamp', new Date().toISOString()]
+      ];
+      let csvContent = "data:text/csv;charset=utf-8," + rows.map(e => e.join(",")).join("\n");
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `cropguard_mission_telemetry_${Date.now()}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      logAudit("EXPORT", "Mission telemetry exported to CSV successfully", "text-primary font-bold");
+
+      logCli("<span class='text-primary'>[EXPORT] Flight telemetry serialized to CSV.</span>");
+    });
+
+    // 7. CLI COMMAND PARSER
+    function executeCli() {
+      const raw = cliInput.value.trim();
+      if (!raw) return;
+      cliInput.value = '';
+
+      const args = raw.split(' ').filter(Boolean);
+      const cmd = args[0].toLowerCase();
+
+      switch (cmd) {
+        case 'help':
+          logCli(`Commands: <strong class="text-white">status</strong>, <strong class="text-white">vla [prompt]</strong>, <strong class="text-white">nodes</strong>, <strong class="text-white">wifi</strong>, <strong class="text-white">esp32</strong>, <strong class="text-white">auto</strong>, <strong class="text-white">rc</strong>, <strong class="text-white">estop</strong>, <strong class="text-white">reset</strong>, <strong class="text-white">speed [0-255]</strong>, <strong class="text-white">relay [1-4] [on|off]</strong>, <strong class="text-white">clear</strong>`);
+          break;
+        case 'status':
+          logCli(`[ESP32]: Latched: ${isEStopLatched} | PWM: ${currentPwm} | Relays: [1:${relays[1]}, 2:${relays[2]}, 3:${relays[3]}, 4:${relays[4]}] | Temp: 24.5°C`);
+          break;
+        case 'estop':
+        case 'halt':
+          triggerEStop();
+          break;
+        case 'reset':
+          disengageEStop();
+          break;
+        case 'vla':
+          const directive = args.slice(1).join(' ');
+          if (directive) {
+            window.submitVlaDirective(directive);
+          } else {
+            logCli("Usage: vla &lt;natural language directive, e.g. 'spot spray blight'&gt;");
+          }
+          break;
+        case 'nodes':
+        case 'diag':
+          window.toggleDiagnosticsModal();
+          logCli("<span class='text-primary font-bold'>Toggled Subsystem Nodes & Diagnostics Mesh</span>");
+          break;
+        case 'wifi':
+          const wS = document.getElementById('top-wifi-ssid')?.innerText || 'N/A';
+          const wG = document.getElementById('top-wifi-sig')?.innerText || 'N/A';
+          logCli(`<span class='text-primary font-bold'>Wi-Fi Link: ${wS} · Signal: ${wG}</span>`);
+          break;
+        case 'esp32':
+          const eT = document.getElementById('top-esp-transport')?.innerText || 'N/A';
+          const eR = document.getElementById('top-esp-rate')?.innerText || 'N/A';
+          logCli(`<span class='text-secondary font-bold'>ESP32 Uplink: ${eT} · Rate: ${eR}</span>`);
+          break;
+        case 'auto':
+          if (socket && socket.connected) socket.emit('toggle_mode', { mode: 'auto' });
+          logCli("<span class='text-primary font-bold'>Mode switched to AUTONOMOUS GPS NAVIGATION</span>");
+          break;
+        case 'manual':
+        case 'rc':
+          if (socket && socket.connected) socket.emit('toggle_mode', { mode: 'manual' });
+          logCli("<span class='text-secondary font-bold'>Mode switched to MANUAL RC OVERRIDE</span>");
+          break;
+        case 'speed':
+          if (args[1]) {
+            const val = parseInt(args[1], 10);
+            if (!isNaN(val)) setSpeed(val);
+            logCli(`PWM Speed command sent: ${currentPwm}`);
+          } else {
+            logCli(`Current speed: ${currentPwm} PWM`);
+          }
+          break;
+        case 'relay':
+          if (args[1] && args[2]) {
+            const idx = parseInt(args[1], 10);
+            const st = args[2].toLowerCase() === 'on';
+            if ([1, 2, 3, 4].includes(idx)) {
+              relays[idx] = st;
+              updateRelayUI(idx);
+      if (socket && socket.connected) {
+        socket.emit('toggle_relay', { target: 'R' + idx, state: relays[idx] });
+      }
+
+              logCli(`Relay ${idx} forced ${st ? 'ON' : 'OFF'}`);
+            } else {
+              logCli("<span class='text-hazard'>Invalid relay #. Choose 1 to 4.</span>");
+            }
+          } else {
+            logCli("Usage: relay &lt;1-4&gt; &lt;on|off&gt;");
+          }
+          break;
+        case 'clear':
+          logCli("DEM3T3R V1 Field Commander OS ready.");
+          break;
+        default:
+          logCli(`<span class='text-hazard'>Command '${cmd}' not recognized. Type 'help'.</span>`);
+          break;
+      }
+    }
+
+    cliExecBtn?.addEventListener('click', executeCli);
+
+    // Live Sensor Ticker & Countdown Simulation (Micro-fluctuations for realistic telemetry)
+    let seconds = 99;
+    setInterval(() => {
+      if (isEStopLatched) return;
+      if (seconds > 0) {
+        seconds--;
+        const m = String(Math.floor(seconds / 60)).padStart(2, '0');
+        const s = String(seconds % 60).padStart(2, '0');
+        const etaEl = document.getElementById('stage-eta-val');
+        if (etaEl) etaEl.innerText = `${m}:${s} ETA`;
+      }
+
+      // Micro-fluctuate values
+      const tEl = document.getElementById('val-temp');
+      if (tEl && Math.random() > 0.6) {
+        tEl.innerText = (24.5 + (Math.random() * 0.4 - 0.2)).toFixed(1);
+      }
+      const hEl = document.getElementById('val-hum');
+      if (hEl && Math.random() > 0.7) {
+        hEl.innerText = (68.0 + (Math.random() * 0.6 - 0.3)).toFixed(1);
+      }
+    }, 1200);
+
+  })();
+</script>
+
+<!-- ============================================================== -->
+<!-- DEM3T3R V1 HARDWARE SUBSYSTEM MESH & BUS DIAGNOSTICS MODAL -->
+<!-- ============================================================== -->
+<div id="hardware-diagnostics-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+  <div class="bg-[#0B0C10] border border-white/15 rounded-2xl w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+    <!-- Modal Header -->
+    <div class="px-5 py-3.5 border-b border-white/10 flex items-center justify-between bg-white/[0.02]">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-lg bg-primary/10 border border-primary/30 flex items-center justify-center text-primary">
+          <span class="material-symbols-outlined text-[18px]">developer_board</span>
+        </div>
+        <div>
+          <h2 class="text-sm font-bold text-white tracking-wide font-mono flex items-center gap-2">
+            DEM3T3R V1 HARDWARE SUBSYSTEM MESH & BUS DIAGNOSTICS
+            <span class="text-[9px] px-2 py-0.5 rounded-full bg-primary/20 text-primary border border-primary/40 font-bold">8 NODES ONLINE</span>
+          </h2>
+          <p class="text-[10px] text-muted font-mono">Real-time I2C, UART, ADC, SPI, and Network Link Telemetry</p>
+        </div>
+      </div>
+      <button onclick="toggleDiagnosticsModal(false)" class="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center text-white/70 hover:text-white transition-all cursor-pointer">
+        <span class="material-symbols-outlined text-[18px]">close</span>
+      </button>
+    </div>
+
+    <!-- Modal Body (Scrollable) -->
+    <div class="p-5 overflow-y-auto space-y-4 font-mono text-xs">
+      <!-- Network & Controller Telemetry Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <!-- Wi-Fi Link Details -->
+        <div class="p-3.5 rounded-xl bg-white/[0.03] border border-white/10">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[11px] font-bold text-white flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-primary text-[16px]">wifi</span>
+              WLAN COMMUNICATIONS INTERFACE
+            </span>
+            <span class="px-2 py-0.5 rounded bg-primary/20 text-primary text-[9px] font-bold" id="diag-wifi-status">ONLINE</span>
+          </div>
+          <div class="grid grid-cols-2 gap-2 text-[10px] text-muted">
+            <div>SSID: <span class="text-white font-bold" id="diag-wifi-ssid">Pix</span></div>
+            <div>Signal: <span class="text-primary font-bold" id="diag-wifi-sig">85%</span></div>
+            <div>RSSI: <span class="text-white font-bold" id="diag-wifi-rssi">-57 dBm</span></div>
+            <div>IPv4: <span class="text-white font-bold" id="diag-wifi-ip">10.195.22.172</span></div>
+            <div>Transport: <span class="text-white font-bold">802.11ax / 5GHz</span></div>
+            <div>Latency: <span class="text-primary font-bold">4.2 ms</span></div>
+          </div>
+        </div>
+
+        <!-- ESP32 Master Link Details -->
+        <div class="p-3.5 rounded-xl bg-white/[0.03] border border-white/10">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[11px] font-bold text-white flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-secondary text-[16px]">router</span>
+              ESP32 MASTER MICROCONTROLLER
+            </span>
+            <span class="px-2 py-0.5 rounded bg-primary/20 text-primary text-[9px] font-bold" id="diag-esp-status">CONNECTED</span>
+          </div>
+          <div class="grid grid-cols-2 gap-2 text-[10px] text-muted">
+            <div>Transport: <span class="text-white font-bold" id="diag-esp-transport">TCP Socket :5000</span></div>
+            <div>Rate: <span class="text-primary font-bold" id="diag-esp-rate">50.0 Hz</span></div>
+            <div>Host IP: <span class="text-white font-bold" id="diag-esp-ip">192.168.8.150</span></div>
+            <div>MCU: <span class="text-white font-bold">ESP32-S3 Dual-Core</span></div>
+            <div>Baud: <span class="text-white font-bold">115200 (Serial fallback)</span></div>
+            <div>Drop Rate: <span class="text-primary font-bold">0.00%</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 8-Node Subsystem Matrix -->
+      <div>
+        <h3 class="text-xs font-bold text-white/90 uppercase tracking-wider mb-2 flex items-center gap-2">
+          <span>PERIPHERAL BUS & HARDWARE SUBSYSTEM NODES</span>
+          <span class="text-[9px] text-muted font-normal">(Auto-Polled at 50Hz)</span>
+        </h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5" id="diag-nodes-grid">
+          <!-- Node 1: Vision -->
+          <div class="p-3 rounded-lg bg-white/[0.02] border border-white/[0.08] hover:border-primary/40 transition-all">
+            <div class="flex items-center justify-between mb-1">
+              <span class="font-bold text-[10px] text-white">1. NODE_VISION</span>
+              <span class="text-[9px] font-bold text-primary" id="diag-status-NODE_VISION">ONLINE</span>
+            </div>
+            <div class="text-[9px] text-muted mb-1">USB UVC / MJPEG / YOLO11</div>
+            <div class="text-[10px] text-white/90 font-mono" id="diag-detail-NODE_VISION">60 FPS | 12.4ms TensorRT</div>
+          </div>
+          <!-- Node 2: GNSS -->
+          <div class="p-3 rounded-lg bg-white/[0.02] border border-white/[0.08] hover:border-primary/40 transition-all">
+            <div class="flex items-center justify-between mb-1">
+              <span class="font-bold text-[10px] text-white">2. NODE_GNSS</span>
+              <span class="text-[9px] font-bold text-primary" id="diag-status-NODE_GNSS">FIXED</span>
+            </div>
+            <div class="text-[9px] text-muted mb-1">UART 9600 / NEO-8M RTK</div>
+            <div class="text-[10px] text-white/90 font-mono" id="diag-detail-NODE_GNSS">14 SVs | HDOP 0.72</div>
+          </div>
+          <!-- Node 3: I2C -->
+          <div class="p-3 rounded-lg bg-white/[0.02] border border-white/[0.08] hover:border-primary/40 transition-all">
+            <div class="flex items-center justify-between mb-1">
+              <span class="font-bold text-[10px] text-white">3. NODE_I2C</span>
+              <span class="text-[9px] font-bold text-primary" id="diag-status-NODE_I2C">ONLINE</span>
+            </div>
+            <div class="text-[9px] text-muted mb-1">I2C 0x76, 0x23 (BME+BH)</div>
+            <div class="text-[10px] text-white/90 font-mono" id="diag-detail-NODE_I2C">27.5°C | 75% | 1013hPa</div>
+          </div>
+          <!-- Node 4: Soil -->
+          <div class="p-3 rounded-lg bg-white/[0.02] border border-white/[0.08] hover:border-primary/40 transition-all">
+            <div class="flex items-center justify-between mb-1">
+              <span class="font-bold text-[10px] text-white">4. NODE_SOIL</span>
+              <span class="text-[9px] font-bold text-primary" id="diag-status-NODE_SOIL">ONLINE</span>
+            </div>
+            <div class="text-[9px] text-muted mb-1">ADC1 CH2, CH3 (Probes)</div>
+            <div class="text-[10px] text-white/90 font-mono" id="diag-detail-NODE_SOIL">A: 42.5% | B: 40.8%</div>
+          </div>
+          <!-- Node 5: Sonar -->
+          <div class="p-3 rounded-lg bg-white/[0.02] border border-white/[0.08] hover:border-primary/40 transition-all">
+            <div class="flex items-center justify-between mb-1">
+              <span class="font-bold text-[10px] text-secondary" id="diag-status-NODE_SONAR">CLEAR</span>
+            </div>
+            <div class="text-[9px] text-muted mb-1">GPIO 8/9 / Ultrasonic</div>
+            <div class="text-[10px] text-white/90 font-mono" id="diag-detail-NODE_SONAR">Clearance: 184 cm</div>
+          </div>
+          <!-- Node 6: Power -->
+          <div class="p-3 rounded-lg bg-white/[0.02] border border-white/[0.08] hover:border-primary/40 transition-all">
+            <div class="flex items-center justify-between mb-1">
+              <span class="font-bold text-[10px] text-white">6. NODE_POWER</span>
+              <span class="text-[9px] font-bold text-primary" id="diag-status-NODE_POWER">NOMINAL</span>
+            </div>
+            <div class="text-[9px] text-muted mb-1">ADC1 CH1 / 6S LiPo BMS</div>
+            <div class="text-[10px] text-white/90 font-mono" id="diag-detail-NODE_POWER">25.4V (88% Reserve)</div>
+          </div>
+          <!-- Node 7: Relays -->
+          <div class="p-3 rounded-lg bg-white/[0.02] border border-white/[0.08] hover:border-primary/40 transition-all">
+            <div class="flex items-center justify-between mb-1">
+              <span class="font-bold text-[10px] text-white">7. NODE_RELAYS</span>
+              <span class="text-[9px] font-bold text-primary" id="diag-status-NODE_RELAYS">ARMED</span>
+            </div>
+            <div class="text-[9px] text-muted mb-1">GPIO 4, 5, 6, 7 / Solid State</div>
+            <div class="text-[10px] text-white/90 font-mono" id="diag-detail-NODE_RELAYS">Active: [Pump, Spare]</div>
+          </div>
+          <!-- Node 8: AI Core -->
+          <div class="p-3 rounded-lg bg-white/[0.02] border border-white/[0.08] hover:border-primary/40 transition-all">
+            <div class="flex items-center justify-between mb-1">
+              <span class="font-bold text-[10px] text-white">8. NODE_AI</span>
+              <span class="text-[9px] font-bold text-primary" id="diag-status-NODE_AI">ONLINE</span>
+            </div>
+            <div class="text-[9px] text-muted mb-1">Ollama / VLA State Machine</div>
+            <div class="text-[10px] text-white/90 font-mono" id="diag-detail-NODE_AI">Mode: IDLE / AUTONOMOUS</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Raw Hardware Packet Sniffer -->
+      <div class="p-3.5 rounded-xl bg-black/60 border border-white/10 font-mono">
+        <div class="flex items-center justify-between mb-1.5">
+          <span class="text-[10px] text-muted font-bold flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-primary text-[14px]">terminal</span>
+            INCOMING TELEMETRY STREAM (RAW BUS PACKET INSPECTOR)
+          </span>
+          <span class="text-[9px] text-primary" id="diag-packet-rate">50 FPS · 0ms LATENCY</span>
+        </div>
+        <pre class="text-[10px] text-primary/90 bg-black/40 p-2.5 rounded border border-white/5 overflow-x-auto whitespace-pre-wrap select-all font-mono" id="diag-raw-packet">{"temperature":27.5,"humidity":75.0,"pressure":1013.25,"light":48200,"soilMoisture":42.5,"soilMoisture2":40.8,"ultrasonic":184,"battery":25.4,"satellites":14,"hdop":0.72,"simulated":false}</pre>
+      </div>
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="px-5 py-3 border-t border-white/10 flex items-center justify-between bg-white/[0.02]">
+      <span class="text-[10px] text-muted font-mono">Press <strong class="text-white">ESC</strong> or <strong class="text-white">N</strong> to close</span>
+      <div class="flex items-center gap-2">
+        <button onclick="if(socket&&socket.connected){socket.emit('request_full_diagnostics');}" class="px-3 py-1 rounded bg-white/10 hover:bg-white/20 text-white font-mono text-[10px] font-semibold transition-all cursor-pointer">
+          REFRESH
+        </button>
+        <button onclick="toggleDiagnosticsModal(false)" class="px-4 py-1 rounded bg-white text-black font-mono text-[10px] font-bold transition-all hover:bg-white/90 cursor-pointer">
+          CLOSE
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body></html>

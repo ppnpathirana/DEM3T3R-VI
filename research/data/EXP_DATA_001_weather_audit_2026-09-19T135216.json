@@ -1,0 +1,130 @@
+{
+  "experiment_id": "EXP-DATA-001",
+  "date": "2026-09-19",
+  "run_timestamp": "2026-09-19T135216",
+  "observations": {
+    "total_records": 14957,
+    "earliest_timestamp": "2026-08-28T14:22:11.471253",
+    "latest_timestamp": "2026-09-19T13:28:01.990790",
+    "span_days": 21.96,
+    "unique_robot_ids": [
+      "DEMETER-01"
+    ],
+    "unique_locations_4dp": 381,
+    "duplicate_records": 732,
+    "per_field_nullability": {
+      "temperature": {
+        "null_count": 0,
+        "missing_pct": 0.0
+      },
+      "humidity": {
+        "null_count": 0,
+        "missing_pct": 0.0
+      },
+      "pressure": {
+        "null_count": 0,
+        "missing_pct": 0.0
+      },
+      "rain_probability": {
+        "null_count": 0,
+        "missing_pct": 0.0
+      },
+      "precipitation": {
+        "null_count": 0,
+        "missing_pct": 0.0
+      },
+      "wind_speed": {
+        "null_count": 0,
+        "missing_pct": 0.0
+      },
+      "uv_index": {
+        "null_count": 0,
+        "missing_pct": 0.0
+      },
+      "cloud_cover": {
+        "null_count": 0,
+        "missing_pct": 0.0
+      },
+      "visibility": {
+        "null_count": 0,
+        "missing_pct": 0.0
+      }
+    },
+    "sampling_interval_stats": {
+      "count": 13740,
+      "mean_sec": 54.98,
+      "median_sec": 0.15,
+      "stdev_sec": 1224.89,
+      "min_sec": 0.0,
+      "max_sec": 56645.64
+    },
+    "value_outliers": {
+      "temperature": {
+        "below_min": 0,
+        "above_max": 0,
+        "total_outliers": 0
+      },
+      "humidity": {
+        "below_min": 0,
+        "above_max": 0,
+        "total_outliers": 0
+      },
+      "pressure": {
+        "below_min": 271,
+        "above_max": 0,
+        "total_outliers": 271
+      },
+      "wind_speed": {
+        "below_min": 0,
+        "above_max": 0,
+        "total_outliers": 0
+      },
+      "uv_index": {
+        "below_min": 0,
+        "above_max": 0,
+        "total_outliers": 0
+      }
+    }
+  },
+  "forecasts": {
+    "total_records": 104685,
+    "created_range": {
+      "min": "2026-08-28T14:22:11.473371",
+      "max": "2026-09-19T13:28:02.021317"
+    },
+    "forecast_date_range": {
+      "min": "2026-08-29",
+      "max": "2026-09-25"
+    },
+    "per_field_nullability": {
+      "temperature_max": {
+        "null_count": 0,
+        "missing_pct": 0.0
+      },
+      "temperature_min": {
+        "null_count": 0,
+        "missing_pct": 0.0
+      },
+      "rain_probability": {
+        "null_count": 0,
+        "missing_pct": 0.0
+      },
+      "precipitation": {
+        "null_count": 0,
+        "missing_pct": 0.0
+      },
+      "humidity": {
+        "null_count": 0,
+        "missing_pct": 0.0
+      },
+      "wind_speed": {
+        "null_count": 0,
+        "missing_pct": 0.0
+      },
+      "uv_index": {
+        "null_count": 0,
+        "missing_pct": 0.0
+      }
+    }
+  }
+}

@@ -1,0 +1,82 @@
+﻿# Environment variables and secrets (CRITICAL)
+.env
+.env.local
+.env.*.local
+*.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Node & Frontend
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+dist/
+
+# Logs & Temporary files
+logs/
+*.log
+.temp/
+tmp/
+
+# IDE & Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Private configuration, captured data, model weights and generated packages
+.env.*
+!.env.example
+*.db
+*.db-*
+*.sqlite*
+*.pt
+*.pth
+*.onnx
+*.engine
+*.safetensors
+*.bin
+*.gguf
+*.zip
+*.exe
+*.apk
+*.aab
+.hypothesis/
+.pytest_cache/
+build_app/
+dist_app/
+android/.gradle/
+android/app/build/
+dashboard-*.png
+# Review and migrate embedded credentials before publishing these files
+config/settings.py
+esp32/esp32_master/esp32_master.ino
+firmware/master/esp32_master/esp32_master.ino

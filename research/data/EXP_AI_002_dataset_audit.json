@@ -1,0 +1,12 @@
+{
+  "experiment_id": "EXP-AI-002",
+  "date": "2026-09-19",
+  "objective": "Determine if labelled validation/test dataset exists for model accuracy evaluation",
+  "dataset_directories_found": [],
+  "total_image_files_in_project": 26,
+  "conclusion": "NO INDEPENDENT TEST DATASET FOUND IN PROJECT REPOSITORY",
+  "impact": "Top-1 accuracy, Precision, Recall, F1 cannot be computed without a labelled test set",
+  "claim_classification": "NOT YET MEASURED",
+  "action_required": "Provide or reconstruct labelled hold-out test splits from original training datasets to enable EXP-AI-002",
+  "note": "Models are Ultralytics classification checkpoints; evaluation requires test split images organized by class in subdirectories"
+}

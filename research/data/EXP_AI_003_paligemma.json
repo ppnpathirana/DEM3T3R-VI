@@ -1,0 +1,21 @@
+{
+  "experiment_id": "EXP-AI-003",
+  "model": "PaliGemma 3B (paligemma-3b-pt-224)",
+  "model_size_gb_fp32": 10.89,
+  "model_size_gb_fp16": 5.45,
+  "device": "CUDA (RTX 3050 6GB)",
+  "load_time_sec": 7.55,
+  "vram_used_after_load_gb": 5.45,
+  "prompt": "Is this plant healthy?",
+  "input_resolution": "224x224",
+  "warm_up_n": 3,
+  "measure_n": 20,
+  "mean_latency_ms": 216.64,
+  "median_latency_ms": 216.29,
+  "stdev_latency_ms": 4.24,
+  "min_latency_ms": 211.5,
+  "max_latency_ms": 228.54,
+  "p95_latency_ms": 228.54,
+  "status": "EXECUTED",
+  "claim_classification": "FACT / MEASURED"
+}

@@ -1,0 +1,149 @@
+﻿# DEM3T3R V1 Treatment Rule Engine
+# Operators: >, <, >=, <=, ==, contains, not_contains
+# Actions: spray, prune, quarantine, monitor, alert_only
+
+rules:
+  - id: tomato_early_blight_high
+    name: "Tomato Early Blight — High Severity"
+    if:
+      disease: {contains: "early_blight"}
+      severity: {">=": 70}
+    then:
+      action: spray
+      agent: "copper_fungicide"
+      duration_seconds: 10
+      dose: high
+      alert: "Apply copper fungicide immediately. Remove affected lower leaves."
+
+  - id: tomato_late_blight_critical
+    name: "Tomato Late Blight — Critical"
+    if:
+      disease: {contains: "late_blight"}
+      confidence: {">=": 0.80}
+    then:
+      action: spray
+      agent: "mancozeb"
+      duration_seconds: 10
+      dose: high
+      alert: "Late blight detected with high confidence. Immediate systemic spray required."
+
+  - id: tomato_early_blight_low
+    name: "Tomato Early Blight — Low Severity"
+    if:
+      disease: {contains: "early_blight"}
+      severity: {"<": 40}
+    then:
+      action: monitor
+      duration_seconds: 0
+      dose: none
+      alert: "Early blight developing. Monitor and apply preventative bio-agent."
+
+  - id: tomato_mosaic_virus
+    name: "Tomato Mosaic Virus"
+    if:
+      disease: {contains: "mosaic_virus"}
+    then:
+      action: quarantine
+      duration_seconds: 0
+      dose: none
+      alert: "Mosaic virus detected. Quarantine infected plants immediately."
+
+  - id: potato_late_blight_high
+    name: "Potato Late Blight — High Severity"
+    if:
+      disease: {contains: "potato_late_blight"}
+      severity: {">=": 50}
+    then:
+      action: spray
+      agent: "chlorothalonil"
+      duration_seconds: 8
+      dose: high
+      alert: "Potato late blight spreading. Apply chlorothalonil spray."
+
+  - id: rice_blast_high
+    name: "Rice Blast — High Severity"
+    if:
+      disease: {contains: "rice_blast"}
+      severity: {">=": 60}
+    then:
+      action: spray
+      agent: "tricyclazole"
+      duration_seconds: 10
+      dose: high
+      alert: "Rice blast at high severity. Tricyclazole application required."
+
+  - id: chilli_leaf_curl_vector
+    name: "Chilli Leaf Curl Virus"
+    if:
+      disease: {contains: "leaf_curl"}
+    then:
+      action: spray
+      agent: "neem_oil_miticide"
+      duration_seconds: 6
+      dose: medium
+      alert: "Chilli leaf curl detected. Apply vector control spray."
+
+  - id: tea_blister_blight_high
+    name: "Tea Blister Blight"
+    if:
+      disease: {contains: "blister_blight"}
+    then:
+      action: spray
+      agent: "copper_oxychloride"
+      duration_seconds: 8
+      dose: high
+      alert: "Tea blister blight alert. Apply copper oxychloride."
+
+  - id: corn_leaf_blight_moderate
+    name: "Corn Leaf Blight — Moderate"
+    if:
+      disease: {contains: "leaf_blight"}
+      severity: {">=": 45}
+    then:
+      action: spray
+      agent: "propiconazole"
+      duration_seconds: 7
+      dose: medium
+      alert: "Corn leaf blight. Apply propiconazole fungicide."
+
+  - id: anthurium_bacterial_blight
+    name: "Anthurium Bacterial Blight"
+    if:
+      disease: {contains: "anthurium_bacterial_blight"}
+    then:
+      action: quarantine
+      duration_seconds: 0
+      dose: none
+      alert: "Bacterial blight detected. Isolate plant and sanitize tools."
+
+  - id: high_humidity_fungal_trigger
+    name: "General Fungal High Humidity Alert"
+    if:
+      humidity: {">=": 85}
+      disease: {contains: "fungal"}
+    then:
+      action: spray
+      agent: "bacillus_subtilis"
+      duration_seconds: 5
+      dose: low
+      alert: "High humidity (>85%) fungal outbreak prevention."
+
+  - id: healthy_plant
+    name: "Healthy Crop Confirmed"
+    if:
+      disease: {"==": "healthy"}
+    then:
+      action: monitor
+      duration_seconds: 0
+      dose: none
+      alert: "Plant is healthy. No treatment needed."
+
+  - id: default_fallback
+    name: "Default Inspection Trigger"
+    if:
+      confidence: {">=": 0.50}
+    then:
+      action: alert_only
+      duration_seconds: 0
+      dose: none
+      alert: "Unclassified pathogen detection. Manual agronomic inspection recommended."

@@ -1,0 +1,284 @@
+
+<!-- Card 2A: Large Optical Video Feed & YOLO11 Diagnostics -->
+<div class="frost-card rounded-2xl flex-[1.2] flex flex-col min-h-0 overflow-hidden">
+<!-- Subsystem Header -->
+<div class="h-9 px-3.5 border-b border-white/[0.06] flex items-center justify-between shrink-0 bg-white/[0.02]">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse glow-dot"></span>
+<span class="font-semibold text-[11px] tracking-wide text-white">Live Optical Viewport</span>
+<span class="text-[10px] text-muted font-mono">· YOLOv11 Native Inference</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-mono text-[9px] text-secondary px-2 py-0.5 rounded-full bg-secondary/10 border border-secondary/20 font-medium">12.4ms TensorRT</span>
+</div>
+</div>
+<!-- 16:9 Optical Stream Viewport -->
+<div class="relative w-full flex-1 bg-black overflow-hidden flex items-center justify-center min-h-0">
+<img alt="Field Tomato Canopy" class="absolute inset-0 w-full h-full object-cover opacity-85 transition-opacity" id="live-stream-img" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCHBU8c1k6oEgaMP0ez52BoE3rbkX6b_pDKZXrzcurLg4tnG6JMUkI7W2gfGh3cxcgEu2Fo08AQKIjk_cskmoKkYpRInE1AnWDFIsjyHSO71ri8zjLvY0dbU0eV3-eBArq1CivcFjzSqN-7Htj13RkFqcO4VVvD5dTPuz1FLN1OgowFg62I3h_wr1Ha7dPjNgL7yNTH4rBckGQYLJRzdMK48c_qJQ7V77DFCnOjcacdUlSR4IWylFwwtA"/>
+<!-- Tactical HUD Corner Brackets -->
+<div class="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-secondary/70 pointer-events-none rounded-tl-sm"></div>
+<div class="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-secondary/70 pointer-events-none rounded-tr-sm"></div>
+<div class="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-secondary/70 pointer-events-none rounded-bl-sm"></div>
+<div class="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-secondary/70 pointer-events-none rounded-br-sm"></div>
+<!-- Crosshairs Reticle Center -->
+<div class="absolute inset-0 pointer-events-none flex items-center justify-center opacity-60">
+<div class="w-10 h-10 border border-secondary/40 rounded-full flex items-center justify-center">
+<div class="w-1.5 h-1.5 bg-secondary rounded-full"></div>
+</div>
+<div class="absolute w-24 h-[1px] bg-secondary/30"></div>
+<div class="absolute h-24 w-[1px] bg-secondary/30"></div>
+</div>
+<!-- Live Telemetry Tag -->
+<div class="absolute top-2.5 left-3 bg-black/80 backdrop-blur-md border border-white/10 px-2.5 py-1 rounded-full flex items-center gap-1.5 pointer-events-none shadow-md">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-ping"></span>
+<span class="font-mono text-[9px] text-white font-medium">1080P @ 60 FPS</span>
+</div>
+<!-- High-Tech Bounding Box 1: Tomato Early Blight (Magenta #E040A0) -->
+<div class="absolute top-8 left-16 w-52 h-34 border border-pathogen bg-pathogen/15 rounded-lg p-1.5 flex flex-col justify-between pointer-events-none shadow-[0_0_20px_rgba(224,64,160,0.35)] backdrop-blur-[1px]">
+<div class="bg-pathogen text-white font-mono font-bold text-[9px] px-2 py-0.5 rounded shadow-sm w-fit flex items-center gap-1">
+<span>TOMATO EARLY BLIGHT</span>
+<span class="text-[8px] bg-black/40 px-1 rounded">0.94</span>
+</div>
+<div class="flex items-center justify-between text-[8px] font-mono bg-black/85 backdrop-blur-md rounded px-2 py-0.5 text-pathogen border border-pathogen/30">
+<span>TARGET SPRAY [WP-04]</span>
+<span class="font-bold">CONF 94.2%</span>
+</div>
+</div>
+<!-- High-Tech Bounding Box 2: Healthy Canopy (Signal Green #00E676) -->
+<div class="absolute bottom-6 right-10 w-48 h-26 border border-primary bg-primary/10 rounded-lg p-1.5 flex flex-col justify-between pointer-events-none shadow-[0_0_20px_rgba(0,230,118,0.25)]">
+<div class="bg-primary text-black font-mono font-bold text-[9px] px-2 py-0.5 rounded w-fit flex items-center gap-1">
+<span>HEALTHY CANOPY</span>
+<span class="text-[8px] bg-black/20 px-1 rounded">0.98</span>
+</div>
+<div class="flex items-center justify-between text-[8px] font-mono bg-black/85 backdrop-blur-md rounded px-2 py-0.5 text-primary border border-primary/30">
+<span>CHL A+B NOMINAL</span>
+<span class="font-bold">CONF 98.1%</span>
+</div>
+</div>
+</div>
+<!-- 16-Crop Model Switcher & Spectral Filter Controls -->
+<div class="p-2 bg-white/[0.02] flex flex-col gap-1.5 border-t border-white/[0.06] shrink-0">
+<div class="flex items-center justify-between gap-2">
+<span class="text-[9px] font-medium text-muted uppercase tracking-wider">Crop Model Weights</span>
+<select class="bg-white/[0.05] border border-white/10 rounded-lg text-white font-sans text-[10px] px-2.5 py-1 focus:outline-none focus:border-secondary cursor-pointer flex-1 max-w-[260px]" id="crop-model-select">
+<option selected="" value="Tomato">Tomato (Solanum lycopersicum)</option>
+<option value="Potato">Potato (Solanum tuberosum)</option>
+<option value="Rice">Rice (Oryza sativa)</option>
+<option value="Corn">Corn (Zea mays)</option>
+<option value="Brinjal">Brinjal / Eggplant</option>
+<option value="Cabbage">Cabbage (Brassica oleracea)</option>
+<option value="Capsicum">Capsicum / Bell Pepper</option>
+<option value="Carrot">Carrot (Daucus carota)</option>
+<option value="Cauliflower">Cauliflower</option>
+<option value="Chilli">Chilli (Capsicum frutescens)</option>
+<option value="Lettuce">Lettuce (Lactuca sativa)</option>
+<option value="Mushroom">Mushroom (Agaricus bisporus)</option>
+<option value="Radish">Radish (Raphanus sativus)</option>
+<option value="Rose">Rose (Rosa hybrid)</option>
+<option value="Tea">Tea Plant (Camellia sinensis)</option>
+<option value="Anthurium">Anthurium andraeanum</option>
+</select>
+</div>
+<div class="grid grid-cols-3 gap-1.5">
+<button class="filter-btn py-1 rounded-lg font-mono text-[9px] font-semibold uppercase transition-all bg-white text-black shadow-sm" id="filter-raw">
+            RAW RGB
+          </button>
+<button class="filter-btn py-1 rounded-lg font-mono text-[9px] font-semibold uppercase transition-all bg-white/[0.04] text-muted hover:text-white border border-white/[0.08]" id="filter-ndvi">
+            🔬 SPECTRAL NDVI
+          </button>
+<button class="filter-btn py-1 rounded-lg font-mono text-[9px] font-semibold uppercase transition-all bg-white/[0.04] text-muted hover:text-white border border-white/[0.08]" id="filter-biomass">
+            🟢 BIOMASS SCAN
+          </button>
+</div>
+</div>
+</div>
+<!-- Card 2B: 8-Channel SCADA Sensor Telemetry Matrix with Nexora-inspired Gauges & Sparklines -->
+<div class="frost-card rounded-2xl flex-1 flex flex-col min-h-0 overflow-hidden">
+<div class="h-8 px-3.5 border-b border-white/[0.06] flex items-center justify-between shrink-0 bg-white/[0.02]">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[15px]">sensors</span>
+<span class="font-semibold text-[11px] tracking-wide text-white">SCADA Telemetry Matrix</span>
+<span class="text-[9px] text-muted">(8 Sensors Online)</span>
+</div>
+<span class="font-mono text-[9px] text-muted">I2C BUS 0x76 / 0x23 · 50Hz STREAM</span>
+</div>
+<div class="p-2 grid grid-cols-2 md:grid-cols-4 gap-2 flex-1 min-h-0 overflow-hidden">
+<!-- 1. Ambient Temp (BME280) with Sparkline -->
+<div class="rounded-xl bg-white/[0.02] border border-white/[0.06] p-2 flex flex-col justify-between relative overflow-hidden group">
+<div class="flex items-center justify-between">
+<span class="text-[9px] text-muted font-medium">Ambient Temp</span>
+<span class="material-symbols-outlined text-primary text-[14px]">thermostat</span>
+</div>
+<div>
+<div class="flex items-baseline gap-1 my-0.5">
+<span class="text-xl font-bold text-white font-mono" id="val-temp">24.5</span>
+<span class="text-[10px] text-muted">°C</span>
+</div>
+<!-- Sparkline -->
+<svg class="w-full h-4 text-primary" preserveaspectratio="none" viewbox="0 0 80 20">
+<path d="M0,15 Q20,10 40,12 T80,5" fill="none" stroke="currentColor" stroke-width="1.5"></path>
+</svg>
+</div>
+<div class="flex items-center justify-between text-[8px] text-muted">
+<span class="text-primary font-medium">Nominal</span>
+<span>±0.3°C</span>
+</div>
+</div>
+<!-- 2. Air Humidity (BME280) with Radial Arc -->
+<div class="rounded-xl bg-white/[0.02] border border-white/[0.06] p-2 flex flex-col justify-between relative overflow-hidden">
+<div class="flex items-center justify-between">
+<span class="text-[9px] text-muted font-medium">Air Humidity</span>
+<span class="material-symbols-outlined text-secondary text-[14px]">water_drop</span>
+</div>
+<div class="flex items-center justify-between">
+<div>
+<span class="text-xl font-bold text-white font-mono" id="val-hum">68.0</span>
+<span class="text-[10px] text-muted">%</span>
+</div>
+<!-- Mini Radial Meter -->
+<div class="w-7 h-7 relative flex items-center justify-center">
+<svg class="w-7 h-7 transform -rotate-90" viewbox="0 0 36 36">
+<path class="text-white/10" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3.5"></path>
+<path class="text-secondary" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="68, 100" stroke-linecap="round" stroke-width="3.5"></path>
+</svg>
+</div>
+</div>
+<div class="flex items-center justify-between text-[8px]">
+<span class="text-secondary font-medium">68% RH</span>
+<span class="text-muted">&gt;75% Risk</span>
+</div>
+</div>
+<!-- 3. Barometer (BME280) -->
+<div class="rounded-xl bg-white/[0.02] border border-white/[0.06] p-2 flex flex-col justify-between relative overflow-hidden">
+<div class="flex items-center justify-between">
+<span class="text-[9px] text-muted font-medium">Barometer</span>
+<span class="material-symbols-outlined text-white text-[14px]">speed</span>
+</div>
+<div>
+<div class="flex items-baseline gap-1 my-0.5">
+<span class="text-lg font-bold text-white font-mono">1013.2</span>
+<span class="text-[9px] text-muted">hPa</span>
+</div>
+<svg class="w-full h-4 text-white/50" preserveaspectratio="none" viewbox="0 0 80 20">
+<path d="M0,10 Q30,12 50,8 T80,10" fill="none" stroke="currentColor" stroke-width="1.2"></path>
+</svg>
+</div>
+<div class="flex items-center justify-between text-[8px] text-muted">
+<span class="text-white">1.0 atm</span>
+<span>Stable</span>
+</div>
+</div>
+<!-- 4. Solar Light (BH1750) -->
+<div class="rounded-xl bg-white/[0.02] border border-white/[0.06] p-2 flex flex-col justify-between relative overflow-hidden">
+<div class="flex items-center justify-between">
+<span class="text-[9px] text-muted font-medium">Solar Flux</span>
+<span class="material-symbols-outlined text-primary text-[14px]">wb_sunny</span>
+</div>
+<div class="flex items-center justify-between">
+<div>
+<span class="text-xl font-bold text-white font-mono" id="val-solar">850</span>
+<span class="text-[10px] text-muted">lx</span>
+</div>
+<div class="w-7 h-7 relative flex items-center justify-center">
+<svg class="w-7 h-7 transform -rotate-90" viewbox="0 0 36 36">
+<path class="text-white/10" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3.5"></path>
+<path class="text-primary" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="55, 100" stroke-linecap="round" stroke-width="3.5"></path>
+</svg>
+</div>
+</div>
+<div class="flex items-center justify-between text-[8px] text-muted">
+<span class="text-primary font-medium">DLI 18.2</span>
+<span>Photosyn.</span>
+</div>
+</div>
+<!-- 5. UV Index (ML8511) -->
+<div class="rounded-xl bg-white/[0.02] border border-white/[0.06] p-2 flex flex-col justify-between relative overflow-hidden">
+<div class="flex items-center justify-between">
+<span class="text-[9px] text-muted font-medium">UV Index</span>
+<span class="material-symbols-outlined text-pathogen text-[14px]">flare</span>
+</div>
+<div>
+<div class="flex items-baseline gap-1 my-0.5">
+<span class="text-xl font-bold text-white font-mono">3.2</span>
+<span class="text-[9px] text-pathogen font-bold">IDX</span>
+</div>
+<div class="w-full bg-black/40 h-1.5 rounded-full overflow-hidden mt-1">
+<div class="bg-pathogen h-full rounded-full" style="width: 32%;"></div>
+</div>
+</div>
+<div class="flex items-center justify-between text-[8px] text-muted">
+<span>Moderate</span>
+<span>1.25V ADC</span>
+</div>
+</div>
+<!-- 6. Soil Moisture A -->
+<div class="rounded-xl bg-white/[0.02] border border-white/[0.06] p-2 flex flex-col justify-between relative overflow-hidden">
+<div class="flex items-center justify-between">
+<span class="text-[9px] text-muted font-medium">Soil Moisture A</span>
+<span class="material-symbols-outlined text-primary text-[14px]">grass</span>
+</div>
+<div class="flex items-center justify-between">
+<div>
+<span class="text-xl font-bold text-white font-mono" id="val-soila">42.5</span>
+<span class="text-[10px] text-muted">%</span>
+</div>
+<div class="w-7 h-7 relative flex items-center justify-center">
+<svg class="w-7 h-7 transform -rotate-90" viewbox="0 0 36 36">
+<path class="text-white/10" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3.5"></path>
+<path class="text-primary" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="42, 100" stroke-linecap="round" stroke-width="3.5"></path>
+</svg>
+</div>
+</div>
+<div class="flex items-center justify-between text-[8px] text-muted">
+<span class="text-primary font-medium">Root Depth</span>
+<span>Optimal</span>
+</div>
+</div>
+<!-- 7. Soil Moisture B -->
+<div class="rounded-xl bg-white/[0.02] border border-white/[0.06] p-2 flex flex-col justify-between relative overflow-hidden">
+<div class="flex items-center justify-between">
+<span class="text-[9px] text-muted font-medium">Soil Moisture B</span>
+<span class="material-symbols-outlined text-secondary text-[14px]">spa</span>
+</div>
+<div class="flex items-center justify-between">
+<div>
+<span class="text-xl font-bold text-white font-mono" id="val-soilb">40.8</span>
+<span class="text-[10px] text-muted">%</span>
+</div>
+<div class="w-7 h-7 relative flex items-center justify-center">
+<svg class="w-7 h-7 transform -rotate-90" viewbox="0 0 36 36">
+<path class="text-white/10" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3.5"></path>
+<path class="text-secondary" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="40, 100" stroke-linecap="round" stroke-width="3.5"></path>
+</svg>
+</div>
+</div>
+<div class="flex items-center justify-between text-[8px] text-muted">
+<span class="text-secondary font-medium">Surface</span>
+<span>Nominal</span>
+</div>
+</div>
+<!-- 8. Obstacle Distance (HC-SR04) with Ultrasonic Ring -->
+<div class="rounded-xl bg-white/[0.02] border border-white/[0.06] p-2 flex flex-col justify-between relative overflow-hidden">
+<div class="flex items-center justify-between">
+<span class="text-[9px] text-muted font-medium">Sonar Distance</span>
+<span class="material-symbols-outlined text-secondary text-[14px]">radar</span>
+</div>
+<div class="flex items-center justify-between">
+<div>
+<span class="text-xl font-bold text-white font-mono" id="val-sonar">184</span>
+<span class="text-[10px] text-muted">cm</span>
+</div>
+<div class="w-7 h-7 relative flex items-center justify-center">
+<svg class="w-7 h-7 transform -rotate-90" viewbox="0 0 36 36">
+<path class="text-white/10" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3.5"></path>
+<path class="text-secondary" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="80, 100" stroke-linecap="round" stroke-width="3.5"></path>
+</svg>
+</div>
+</div>
+<div class="flex items-center justify-between text-[8px]">
+<span class="text-primary font-semibold">Clear &gt;150cm</span>
+<span class="text-muted">HC-SR04</span>
+</div>
+</div>
+</div>
+</div>
