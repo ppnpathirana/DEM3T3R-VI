@@ -1,3 +1,16 @@
+"""
+@file: exp_ai_002_dataset_audit.py
+@description: Backend logic module for DEM3T3R V1.
+
+@project: DEM3T3R V1
+@author: Pasindu Pathirana
+@contact: https://github.com/ppnpathirana/DEM3T3R-VI
+@version: 1.0.0
+@date: 2026
+
+All rights reserved. Unauthorized copying is strictly prohibited.
+"""
+
 """EXP-AI-002: Validation Dataset Availability Audit"""
 import sys, time, json, os
 if hasattr(sys.stdout, 'reconfigure'):

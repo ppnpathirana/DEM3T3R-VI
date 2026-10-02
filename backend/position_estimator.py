@@ -1,4 +1,17 @@
 """
+@file: position_estimator.py
+@description: Backend logic module for DEM3T3R V1.
+
+@project: DEM3T3R V1
+@author: Pasindu Pathirana
+@contact: https://github.com/ppnpathirana/DEM3T3R-VI
+@version: 1.0.0
+@date: 2026
+
+All rights reserved. Unauthorized copying is strictly prohibited.
+"""
+
+"""
 Extended Kalman Filter (EKF) Position Estimator & Dual-Source Sensor Fusion for DEM3T3R V1 Robot.
 Fuses:
 1. Rover Hardware GPS Module (UART / NMEA from ESP32 - HDOP, Satellites, RTK fix)

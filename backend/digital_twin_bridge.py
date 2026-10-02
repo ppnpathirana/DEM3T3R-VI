@@ -1,4 +1,17 @@
 """
+@file: digital_twin_bridge.py
+@description: Backend logic module for DEM3T3R V1.
+
+@project: DEM3T3R V1
+@author: Pasindu Pathirana
+@contact: https://github.com/ppnpathirana/DEM3T3R-VI
+@version: 1.0.0
+@date: 2026
+
+All rights reserved. Unauthorized copying is strictly prohibited.
+"""
+
+"""
 DEM3T3R V1 Digital Twin & Simulation Bridge (Sim2Real Synchronization).
 Interfaces real robot telemetry with Virtual Digital Twin Simulators (Three.js WebGL / NVIDIA Isaac Sim):
 1. Exports real-time 6-DOF 3D robot state (pose, roll, pitch, yaw, joint angles, wheel velocities, IMU)

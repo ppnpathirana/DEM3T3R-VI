@@ -1,4 +1,17 @@
 """
+@file: neural_segmentation.py
+@description: Backend logic module for DEM3T3R V1.
+
+@project: DEM3T3R V1
+@author: Pasindu Pathirana
+@contact: https://github.com/ppnpathirana/DEM3T3R-VI
+@version: 1.0.0
+@date: 2026
+
+All rights reserved. Unauthorized copying is strictly prohibited.
+"""
+
+"""
 DEM3T3R V1 Semantic Terrain & Crop Segmentation Neural Network
 Segments agricultural fields pixel-by-pixel into:
   - Class 0: Sky / Background

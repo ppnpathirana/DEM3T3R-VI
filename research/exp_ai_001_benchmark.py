@@ -1,4 +1,17 @@
 """
+@file: exp_ai_001_benchmark.py
+@description: Backend logic module for DEM3T3R V1.
+
+@project: DEM3T3R V1
+@author: Pasindu Pathirana
+@contact: https://github.com/ppnpathirana/DEM3T3R-VI
+@version: 1.0.0
+@date: 2026
+
+All rights reserved. Unauthorized copying is strictly prohibited.
+"""
+
+"""
 EXP-AI-001: DEMETER YOLO Model Inference Latency & Resource Benchmark
 ======================================================================
 Measures cold-start, warm-up, and steady-state inference latency for all 16

@@ -1,4 +1,17 @@
 """
+@file: cropguard_vla_master.py
+@description: Backend logic module for DEM3T3R V1.
+
+@project: DEM3T3R V1
+@author: Pasindu Pathirana
+@contact: https://github.com/ppnpathirana/DEM3T3R-VI
+@version: 1.0.0
+@date: 2026
+
+All rights reserved. Unauthorized copying is strictly prohibited.
+"""
+
+"""
 🌾 DEM3T3R V1 VLA Master - Zero-Shot Vision-Language Autonomous Perception & Actuation Engine
 Model: Google PaliGemma 3B (google/paligemma-3b-pt-224) via FP16 CUDA
 Zero-Shot Generalization: Multi-attribute visual reasoning for untrained anomalies, pests & lesions

@@ -1,4 +1,17 @@
 """
+@file: vision_obstacle_detector.py
+@description: Backend logic module for DEM3T3R V1.
+
+@project: DEM3T3R V1
+@author: Pasindu Pathirana
+@contact: https://github.com/ppnpathirana/DEM3T3R-VI
+@version: 1.0.0
+@date: 2026
+
+All rights reserved. Unauthorized copying is strictly prohibited.
+"""
+
+"""
 DEM3T3R V1 Vision-Based Obstacle Detector (Camera Only — No Hardware Distance Sensors)
 
 Processes live camera video frames to detect obstacles in the rover's path.

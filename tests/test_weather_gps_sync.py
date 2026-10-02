@@ -1,4 +1,17 @@
 """
+@file: test_weather_gps_sync.py
+@description: Backend logic module for DEM3T3R V1.
+
+@project: DEM3T3R V1
+@author: Pasindu Pathirana
+@contact: https://github.com/ppnpathirana/DEM3T3R-VI
+@version: 1.0.0
+@date: 2026
+
+All rights reserved. Unauthorized copying is strictly prohibited.
+"""
+
+"""
 Tests for GPS coordinate synchronization, exact location tracking, and location-dependent UV Index and Humidity.
 """
 import pytest

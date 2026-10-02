@@ -1,3 +1,16 @@
+/**
+ * @file SensorCard.tsx
+ * @description Core component for DEM3T3R V1 architecture.
+ * 
+ * @project DEM3T3R V1
+ * @author Pasindu Pathirana
+ * @contact https://github.com/ppnpathirana/DEM3T3R-VI
+ * @version 1.0.0
+ * @date 2026
+ * 
+ * All rights reserved.
+ */
+
 import React from 'react';
 import { SensorData } from '../App';
 import { useLanguage } from '../context/LanguageContext';

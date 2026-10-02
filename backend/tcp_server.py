@@ -1,4 +1,17 @@
 """
+@file: tcp_server.py
+@description: Backend logic module for DEM3T3R V1.
+
+@project: DEM3T3R V1
+@author: Pasindu Pathirana
+@contact: https://github.com/ppnpathirana/DEM3T3R-VI
+@version: 1.0.0
+@date: 2026
+
+All rights reserved. Unauthorized copying is strictly prohibited.
+"""
+
+"""
 TCP Server - High-reliability communication bridge between Single ESP32-S3 and DEM3T3R V1 backend.
 Supports:
 - Unified ESP32-S3 onboard sensor stream (GPS, dual ultrasonics, BME280, BH1750, GUVA-S12SD UV, dual Soil Moisture)

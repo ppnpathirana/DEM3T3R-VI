@@ -1,4 +1,17 @@
 """
+@file: neural_depth.py
+@description: Backend logic module for DEM3T3R V1.
+
+@project: DEM3T3R V1
+@author: Pasindu Pathirana
+@contact: https://github.com/ppnpathirana/DEM3T3R-VI
+@version: 1.0.0
+@date: 2026
+
+All rights reserved. Unauthorized copying is strictly prohibited.
+"""
+
+"""
 DEM3T3R V1 Monocular 3D Depth Estimation Neural Network
 Leverages PyTorch with CUDA acceleration (RTX 3050 FP16) to generate real-time
 metric relative depth maps and 3D corridor clearance from 2D monocular camera video.

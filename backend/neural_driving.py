@@ -1,4 +1,17 @@
 """
+@file: neural_driving.py
+@description: Backend logic module for DEM3T3R V1.
+
+@project: DEM3T3R V1
+@author: Pasindu Pathirana
+@contact: https://github.com/ppnpathirana/DEM3T3R-VI
+@version: 1.0.0
+@date: 2026
+
+All rights reserved. Unauthorized copying is strictly prohibited.
+"""
+
+"""
 DEM3T3R V1 End-to-End Neural Behavioral Driving Network
 Implements the NVIDIA DAVE-2 Deep Learning Autonomous Driving Architecture:
 https://developer.nvidia.com/blog/deep-learning-self-driving-cars/

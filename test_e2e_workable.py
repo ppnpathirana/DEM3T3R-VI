@@ -1,4 +1,17 @@
 """
+@file: test_e2e_workable.py
+@description: Backend logic module for DEM3T3R V1.
+
+@project: DEM3T3R V1
+@author: Pasindu Pathirana
+@contact: https://github.com/ppnpathirana/DEM3T3R-VI
+@version: 1.0.0
+@date: 2026
+
+All rights reserved. Unauthorized copying is strictly prohibited.
+"""
+
+"""
 End-to-End Verification Test for DEM3T3R V1 SCADA OS & Robot Backend.
 Verifies HTTP 200, static asset bundling, sub-millisecond Socket.IO control dispatch,
 multi-node telemetry (Wi-Fi, ESP32, 8 peripheral nodes), and the VLA Cognitive Thought Stream HUD.
